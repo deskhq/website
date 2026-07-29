@@ -1,0 +1,70 @@
+/*
+ * The consent banner, wearing the page's clothes.
+ *
+ * vanilla-cookieconsent themes entirely through custom properties on its own
+ * root, so this maps them onto the app tokens in tokens.css — the same source
+ * index.astro reads from, which is what keeps the banner from looking bolted
+ * on when upstream's palette moves. Imported *after* the plugin's stylesheet
+ * (src/scripts/analytics.ts) so these declarations win.
+ */
+#cc-main {
+	--cc-font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+	--cc-bg: var(--app-card);
+	--cc-primary-color: var(--app-foreground);
+	--cc-secondary-color: var(--app-muted-foreground);
+	--cc-link-color: var(--app-chart-2);
+
+	/* Buttons echo .btn-dark / .btn-outline, pills included. */
+	--cc-btn-border-radius: 99px;
+	--cc-btn-primary-bg: var(--app-primary);
+	--cc-btn-primary-color: var(--app-primary-foreground);
+	--cc-btn-primary-border-color: var(--app-primary);
+	--cc-btn-primary-hover-bg: var(--app-dark-accent);
+	--cc-btn-primary-hover-color: var(--app-primary-foreground);
+	--cc-btn-primary-hover-border-color: var(--app-dark-accent);
+	--cc-btn-secondary-bg: var(--app-popover);
+	--cc-btn-secondary-color: var(--app-muted-foreground);
+	--cc-btn-secondary-border-color: var(--app-input);
+	--cc-btn-secondary-hover-bg: var(--app-accent);
+	--cc-btn-secondary-hover-color: var(--app-foreground);
+	--cc-btn-secondary-hover-border-color: var(--app-input);
+
+	--cc-modal-border-radius: var(--app-radius);
+	--cc-overlay-bg: var(--app-scrim);
+	--cc-separator-border-color: var(--app-border);
+	--cc-section-category-border: var(--app-border);
+	--cc-cookie-category-block-bg: var(--app-muted);
+	--cc-cookie-category-block-border: var(--app-border);
+	--cc-cookie-category-block-hover-bg: var(--app-accent);
+	--cc-cookie-category-block-hover-border: var(--app-input);
+	--cc-cookie-category-expanded-block-bg: transparent;
+	--cc-cookie-category-expanded-block-hover-bg: var(--app-secondary);
+	--cc-footer-bg: var(--app-popover);
+	--cc-footer-color: var(--app-muted-foreground);
+	--cc-footer-border-color: var(--app-border);
+	--cc-toggle-on-bg: var(--app-primary);
+	--cc-toggle-off-bg: var(--app-input);
+	--cc-toggle-on-knob-bg: var(--app-card);
+	--cc-toggle-off-knob-bg: var(--app-card);
+	--cc-toggle-readonly-bg: var(--app-secondary);
+	--cc-toggle-readonly-knob-bg: var(--app-card);
+	--cc-toggle-readonly-knob-icon-color: var(--app-muted-foreground);
+	--cc-webkit-scrollbar-bg: var(--app-input);
+	--cc-webkit-scrollbar-hover-bg: var(--app-muted-foreground);
+
+	/*
+	 * Above the sticky nav (z-index 30), below the full-screen mobile menu
+	 * (40). The banner sits bottom-left and the nav sits at the top so they
+	 * never actually meet, but an open mobile menu covers the whole viewport —
+	 * it should cover this too, rather than have a banner floating over it.
+	 */
+	--cc-z-index: 35;
+}
+
+/* Titles are set in the page's serif, like every other heading. */
+#cc-main .cm__title,
+#cc-main .pm__title {
+	font-family: 'Newsreader', serif;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+}

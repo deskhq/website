@@ -42,6 +42,31 @@ const jsonLd = {
 	offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 	author: { '@type': 'Organization', name: 'deskhq', url: 'https://github.com/deskhq' },
 };
+
+// Google Analytics 4. The measurement ID is read from the environment rather
+// than written down here, so local dev, preview branches and forks stay out of
+// production's numbers: with the variable unset nothing below renders, no
+// request reaches googletagmanager, and the consent banner never ships.
+const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
+
+// Consent Mode v2, declared before gtag.js is even fetched: every signal starts
+// denied, so GA4's first ping is cookieless and stays that way until the banner
+// says otherwise. The three ad_* signals are never updated — this site runs no
+// ads. src/scripts/analytics.ts owns the flip; all this does is stand up
+// window.gtag so the rest of the page has something to talk to.
+const gaBootstrap = `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {
+	ad_storage: 'denied',
+	ad_user_data: 'denied',
+	ad_personalization: 'denied',
+	analytics_storage: 'denied',
+	wait_for_update: 500,
+});
+gtag('js', new Date());
+gtag('config', ${JSON.stringify(gaMeasurementId)});
+`.trim();
 ---
 
 <!doctype html>
@@ -68,10 +93,19 @@ const jsonLd = {
 		<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+		{gaMeasurementId && <link rel="preconnect" href="https://www.googletagmanager.com" />}
 		<link
 			href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap"
 			rel="stylesheet"
 		/>
+		{
+			gaMeasurementId && (
+				<Fragment>
+					<script is:inline set:html={gaBootstrap} />
+					<script async is:inline src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`} />
+				</Fragment>
+			)
+		}
 	</head>
 	<body>
 		<!-- ============================ NAV ============================ -->
@@ -88,9 +122,9 @@ const jsonLd = {
 				<nav class="nav-links">
 					<a class="nav-link" href="#features">Features</a>
 					<a class="nav-link" href="#selfhost">Self-hosting</a>
-					<a class="nav-link" href={demo} target="_blank" rel="noopener">Live demo</a>
-					<a class="nav-link" href={docs}>Docs</a>
-					<a class="btn btn-dark btn-sm" href={github}>
+					<a class="nav-link" href={demo} target="_blank" rel="noopener" data-cta="live_demo" data-placement="nav">Live demo</a>
+					<a class="nav-link" href={docs} data-cta="docs" data-placement="nav">Docs</a>
+					<a class="btn btn-dark btn-sm" href={github} data-cta="github" data-placement="nav">
 						<svg width="13" height="13" viewBox="0 0 24 24" fill="#f3efe4" aria-hidden="true"
 							><path
 								d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.58 9.58 0 0 1 12 6.84c.85 0 1.71.11 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85V21c0 .27.16.58.67.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"
@@ -126,13 +160,13 @@ const jsonLd = {
 						there's no one to pay.
 					</p>
 					<div class="hero-actions">
-						<a class="btn btn-dark btn-lg" href={installGuide}>
+						<a class="btn btn-dark btn-lg" href={installGuide} data-cta="install_guide" data-placement="hero">
 							Deploy in 5 minutes
 							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
 								><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg
 							>
 						</a>
-						<a class="btn btn-outline btn-lg" href={demo} target="_blank" rel="noopener">Try the live demo</a>
+						<a class="btn btn-outline btn-lg" href={demo} target="_blank" rel="noopener" data-cta="live_demo" data-placement="hero">Try the live demo</a>
 					</div>
 					<p class="hero-demo-note">
 						No signup, no install — the demo's login page shows the shared credentials.
@@ -375,7 +409,7 @@ const jsonLd = {
 						<div class="feature-text"
 							><span class="feature-name">A REST API, not a scraping project</span
 							><span class="feature-desc"
-								>A versioned public API under <strong>/api/v1</strong>, described by an OpenAPI 3.1 document that a test keeps in lockstep with the routes — so the spec cannot quietly drift from the running code. Browse the <a href={apiReference} target="_blank" rel="noopener">API reference</a>, or point a generator at the <a href={openapiSpec} target="_blank" rel="noopener">spec</a> and get a typed client in your language.</span
+								>A versioned public API under <strong>/api/v1</strong>, described by an OpenAPI 3.1 document that a test keeps in lockstep with the routes — so the spec cannot quietly drift from the running code. Browse the <a href={apiReference} target="_blank" rel="noopener" data-cta="docs" data-placement="features">API reference</a>, or point a generator at the <a href={openapiSpec} target="_blank" rel="noopener" data-cta="docs" data-placement="features">spec</a> and get a typed client in your language.</span
 							></div
 						>
 					</div>
@@ -496,7 +530,7 @@ const jsonLd = {
 				<!-- links stay on the text's own line: Astro trims the whitespace
 				     between a line break and an element, which eats the space -->
 				<p class="trust-note">
-					None of this is a plan you upgrade to. It's the <a href={configGuide} target="_blank" rel="noopener">configuration guide</a> and the <a href={featureToggles} target="_blank" rel="noopener">feature toggles</a> — read them before you believe this page.
+					None of this is a plan you upgrade to. It's the <a href={configGuide} target="_blank" rel="noopener" data-cta="docs" data-placement="selfhost">configuration guide</a> and the <a href={featureToggles} target="_blank" rel="noopener" data-cta="docs" data-placement="selfhost">feature toggles</a> — read them before you believe this page.
 				</p>
 			</div>
 		</section>
@@ -519,7 +553,7 @@ const jsonLd = {
 						</li>
 						<li>
 							<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
-							<span><strong>Your name on it.</strong> Set the instance name, drop your marks into a mounted directory, drop the attribution line. Read at runtime, so it takes no fork, no rebuild and no custom image — <a href={brandingGuide} target="_blank" rel="noopener">the branding guide</a> is three settings long.</span>
+							<span><strong>Your name on it.</strong> Set the instance name, drop your marks into a mounted directory, drop the attribution line. Read at runtime, so it takes no fork, no rebuild and no custom image — <a href={brandingGuide} target="_blank" rel="noopener" data-cta="docs" data-placement="selfhost">the branding guide</a> is three settings long.</span>
 						</li>
 						<li>
 							<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
@@ -559,7 +593,7 @@ const jsonLd = {
 						<div class="cursor-line"><span class="prompt">$</span> <span class="cursor"></span></div>
 					</div>
 					<!-- compose stays the headline path; the PaaS route is the footnote -->
-					<p class="terminal-note">Would rather not hand-manage a VPS? The repo also ships a Dokploy compose file — four screens of settings, no YAML editing. <a href={dokployGuide} target="_blank" rel="noopener">Deploying on Dokploy</a>.</p>
+					<p class="terminal-note">Would rather not hand-manage a VPS? The repo also ships a Dokploy compose file — four screens of settings, no YAML editing. <a href={dokployGuide} target="_blank" rel="noopener" data-cta="docs" data-placement="selfhost">Deploying on Dokploy</a>.</p>
 				</div>
 			</div>
 		</section>
@@ -575,14 +609,14 @@ const jsonLd = {
 				<h2 class="serif cta-title">Set up The Desk before your next standup</h2>
 				<p class="cta-lede">Free forever, MIT licensed. If you can run a container, you can run your team's chat.</p>
 				<div class="cta-actions">
-					<a class="btn btn-dark btn-lg" href={installGuide}>Read the install guide</a>
-					<a class="btn btn-outline btn-lg" href={github}>
+					<a class="btn btn-dark btn-lg" href={installGuide} data-cta="install_guide" data-placement="footer_cta">Read the install guide</a>
+					<a class="btn btn-outline btn-lg" href={github} data-cta="github" data-placement="footer_cta">
 						<svg width="14" height="14" viewBox="0 0 24 24" fill="#665f4e" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.58 9.58 0 0 1 12 6.84c.85 0 1.71.11 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85V21c0 .27.16.58.67.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"></path></svg>
 						Star on GitHub
 					</a>
 				</div>
 				<p class="cta-note">
-					Not ready to install? <a href={demo} target="_blank" rel="noopener">Try the live demo</a> — no signup, credentials are on the login page.
+					Not ready to install? <a href={demo} target="_blank" rel="noopener" data-cta="live_demo" data-placement="footer_cta">Try the live demo</a> — no signup, credentials are on the login page.
 				</p>
 			</div>
 		</section>
@@ -599,11 +633,17 @@ const jsonLd = {
 					<span class="footer-copy">The Desk · MIT License</span>
 				</div>
 				<nav class="footer-links">
-					<a href={demo} target="_blank" rel="noopener">Live demo</a>
-					<a href={docs}>Docs</a>
-					<a href={github}>GitHub</a>
+					<a href={demo} target="_blank" rel="noopener" data-cta="live_demo" data-placement="footer">Live demo</a>
+					<a href={docs} data-cta="docs" data-placement="footer">Docs</a>
+					<a href={github} data-cta="github" data-placement="footer">GitHub</a>
 					<a href={`${github}/releases`}>Changelog</a>
 					<a href={`${github}/discussions`}>Community</a>
+					{/* The only way back into the banner once it's been answered. */}
+					{gaMeasurementId && (
+						<button class="footer-cc" type="button" data-cc="show-preferencesModal">
+							Cookies
+						</button>
+					)}
 				</nav>
 			</div>
 		</footer>
@@ -627,15 +667,15 @@ const jsonLd = {
 				<div class="mobile-links">
 					<a href="#features">Features <svg viewBox="0 0 24 24" fill="none" stroke="#b3ab97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
 					<a href="#selfhost">Self-hosting <svg viewBox="0 0 24 24" fill="none" stroke="#b3ab97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
-					<a href={demo} target="_blank" rel="noopener">Live demo <svg viewBox="0 0 24 24" fill="none" stroke="#b3ab97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
-					<a href={docs}>Docs <svg viewBox="0 0 24 24" fill="none" stroke="#b3ab97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
+					<a href={demo} target="_blank" rel="noopener" data-cta="live_demo" data-placement="mobile_menu">Live demo <svg viewBox="0 0 24 24" fill="none" stroke="#b3ab97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
+					<a href={docs} data-cta="docs" data-placement="mobile_menu">Docs <svg viewBox="0 0 24 24" fill="none" stroke="#b3ab97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
 					<a href={`${github}/releases`}>Changelog <svg viewBox="0 0 24 24" fill="none" stroke="#b3ab97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
 					<a href={`${github}/discussions`}>Community <svg viewBox="0 0 24 24" fill="none" stroke="#b3ab97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
 				</div>
 				<div class="mobile-cta">
-					<a class="btn btn-dark btn-block" href={installGuide}>Deploy in 5 minutes</a>
-					<a class="btn btn-outline btn-block" href={demo} target="_blank" rel="noopener">Try the live demo</a>
-					<a class="btn btn-outline btn-block" href={github}>
+					<a class="btn btn-dark btn-block" href={installGuide} data-cta="install_guide" data-placement="mobile_menu">Deploy in 5 minutes</a>
+					<a class="btn btn-outline btn-block" href={demo} target="_blank" rel="noopener" data-cta="live_demo" data-placement="mobile_menu">Try the live demo</a>
+					<a class="btn btn-outline btn-block" href={github} data-cta="github" data-placement="mobile_menu">
 						<svg width="15" height="15" viewBox="0 0 24 24" fill="#665f4e" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.58 9.58 0 0 1 12 6.84c.85 0 1.71.11 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85V21c0 .27.16.58.67.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"></path></svg>
 						Star on GitHub
 					</a>
@@ -660,6 +700,13 @@ const jsonLd = {
 			toggle?.addEventListener('click', openMenu);
 			closeBtn?.addEventListener('click', closeMenu);
 			menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
+
+			// Analytics and its consent banner are opted into at build time. With
+			// PUBLIC_GA_MEASUREMENT_ID unset this condition is statically false, so
+			// the chunk is never fetched and the page stays dependency-free.
+			if (import.meta.env.PUBLIC_GA_MEASUREMENT_ID) {
+				import('../scripts/analytics.ts');
+			}
 		</script>
 
 		<style is:global>
@@ -1690,12 +1737,23 @@ const jsonLd = {
 				align-items: center;
 				gap: 20px;
 			}
-			.footer-links a {
+			.footer-links a,
+			.footer-links .footer-cc {
 				font-size: 13px;
 				color: var(--faint);
 			}
-			.footer-links a:hover {
+			.footer-links a:hover,
+			.footer-links .footer-cc:hover {
 				color: var(--ink);
+			}
+			/* Reads as one more footer link; it's a button because it opens a dialog. */
+			.footer-cc {
+				padding: 0;
+				border: none;
+				background: none;
+				font: inherit;
+				font-weight: inherit;
+				cursor: pointer;
 			}
 
 			/* mobile menu */
