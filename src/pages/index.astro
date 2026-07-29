@@ -298,6 +298,62 @@ const jsonLd = {
 			</div>
 		</section>
 
+		<!-- ============================ ON YOUR PHONE ============================ -->
+		<!--
+		  Class prefix is `phone-`, not `mobile-`: `.mobile-menu` and friends
+		  below are the nav drawer, and the two are not related.
+		-->
+		<section id="mobile" class="phone">
+			<div class="wrap phone-grid">
+				<!--
+				  The same synced capture the hero serves below 768px, here at
+				  full height — the section claims there is a real mobile design,
+				  so it should show one.
+				-->
+				<div class="phone-shot">
+					<picture>
+						<source srcset="/shell/mobile-dark.png" media="(prefers-color-scheme: dark)" width="780" height="1688" />
+						<img
+							src="/shell/mobile-light.png"
+							alt="The Desk on a phone: the #product-launch channel with a pinned message, an attachment, reactions, a thread and the message composer"
+							width="780"
+							height="1688"
+							loading="lazy"
+							decoding="async"
+						/>
+					</picture>
+				</div>
+				<div class="phone-copy">
+					<span class="eyebrow eyebrow--gold">On your phone</span>
+					<h2 class="serif section-title phone-title">Install it on your phone, then tell it when to be&nbsp;quiet</h2>
+					<p class="section-lede">
+						The same server you already run, on the home screen. No app store, no second product, no
+						third-party notification service in the middle.
+					</p>
+					<ul class="phone-list">
+						<li>
+							<svg viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2.5"></rect><path d="M12 7v7"></path><path d="m9 11 3 3 3-3"></path></svg>
+							<span
+								><strong>Add to home screen.</strong> An installable app on iOS, Android and desktop, with web push so messages arrive when the tab is closed. Fresh installs generate their own push keys, so it works without extra setup.</span
+							>
+						</li>
+						<li>
+							<svg viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2.5"></rect><path d="M5 15h14"></path><path d="M10 18.5h4"></path></svg>
+							<span
+								><strong>Designed for the phone, not shrunk to fit.</strong> Dialogs come up as bottom sheets, a long press opens message actions, and threads and the quick switcher go full screen.</span
+							>
+						</li>
+						<li>
+							<svg viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+							<span
+								><strong>Quiet hours.</strong> Pause notifications on a daily schedule, or snooze them for the rest of today. Calm is a setting, not a hope.</span
+							>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
 		<!-- ============================ SELF-HOST ============================ -->
 		<section id="selfhost" class="selfhost">
 			<div class="wrap selfhost-grid">
@@ -1005,6 +1061,76 @@ const jsonLd = {
 			}
 
 			/* self-host */
+			/* on your phone — the capture sits beside the copy that describes it */
+			.phone {
+				background: var(--cream);
+				border-bottom: 1px solid var(--line);
+			}
+			.phone-grid {
+				padding: 84px 32px;
+				display: grid;
+				grid-template-columns: 300px 1fr;
+				gap: 64px;
+				align-items: center;
+			}
+			.phone-shot {
+				border: 1px solid #d8d4ca;
+				border-radius: 18px;
+				overflow: hidden;
+				background: var(--card);
+				box-shadow: 0 24px 60px rgba(60, 55, 40, 0.12);
+			}
+			.phone-shot img {
+				display: block;
+				width: 100%;
+				height: auto;
+			}
+			/* Same reason as .showcase-frame: the frame follows the shot it holds. */
+			@media (prefers-color-scheme: dark) {
+				.phone-shot {
+					background: var(--app-dark-card);
+					border-color: var(--app-dark-border);
+					box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+				}
+			}
+			.phone-copy {
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+				/* the column is ~830px at full width; capped so the lede and the
+				   list keep the same measure as every other section's copy */
+				max-width: 620px;
+			}
+			.phone-title {
+				text-wrap: balance;
+			}
+			.phone-list {
+				list-style: none;
+				padding: 0;
+				margin-top: 12px;
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
+			}
+			.phone-list li {
+				display: flex;
+				gap: 13px;
+				align-items: flex-start;
+				font-size: 14.5px;
+				line-height: 1.55;
+				color: var(--muted);
+			}
+			.phone-list svg {
+				width: 17px;
+				height: 17px;
+				flex-shrink: 0;
+				margin-top: 3px;
+			}
+			.phone-list strong {
+				color: var(--ink);
+				font-weight: 600;
+			}
+
 			.selfhost {
 				background: var(--dark);
 				color: var(--paper);
@@ -1335,6 +1461,21 @@ const jsonLd = {
 				.feature-grid {
 					grid-template-columns: 1fr;
 					gap: 12px;
+				}
+
+				.phone-grid {
+					grid-template-columns: 1fr;
+					gap: 30px;
+					padding: 52px 20px 56px;
+				}
+				/* stacked, the copy leads and the shot follows it — a 628px-tall
+				   image above the heading would push the whole section off screen */
+				.phone-copy {
+					order: -1;
+				}
+				.phone-shot {
+					max-width: 290px;
+					margin: 0 auto;
 				}
 
 				.selfhost-grid {
