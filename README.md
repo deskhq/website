@@ -68,10 +68,51 @@ catches two kinds of drift in `scripts/sync-from-upstream.mjs`:
   a locale there fails the check until the copy follows. Two locales is two
   locales — the page must not round up.
 
+## Analytics
+
+The page reports to Google Analytics 4, behind a consent banner
+([`vanilla-cookieconsent`](https://github.com/orestbida/cookieconsent), pinned)
+wired to Google Consent Mode v2. Everything is driven by one environment
+variable:
+
+| Variable | Value |
+| --- | --- |
+| `PUBLIC_GA_MEASUREMENT_ID` | The GA4 measurement ID — GA4 → **Admin → Data streams → the web stream → Measurement ID**. Looks like `G-XXXXXXXXXX`. |
+
+**Unset it and analytics does not exist.** No gtag.js, no consent banner, no
+`Cookies` link in the footer, no extra bytes — the build is byte-for-byte the
+dependency-free page it was before. That is the default for local dev, preview
+branches and forks, so only production writes to the property. Set it in
+Cloudflare Pages for the production environment only.
+
+To exercise it locally, put it in `.env` (gitignored) or pass it inline:
+
+```bash
+PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX npm run build && npm run preview
+```
+
+Consent starts at `denied` for all four Google signals before gtag.js is even
+fetched, so the first ping is cookieless. Accepting flips `analytics_storage`
+alone; the three `ad_*` signals stay denied permanently, because the site runs
+no ads. Withdrawing consent — the **Cookies** link in the footer — clears the
+`_ga*` cookies.
+
+Beyond the automatic `page_view`, two custom events:
+
+| Event | Parameters |
+| --- | --- |
+| `cta_click` | `cta` (`install_guide`, `live_demo`, `github`, `docs`), `placement` (`nav`, `hero`, `features`, `selfhost`, `footer_cta`, `footer`, `mobile_menu`), and `doc_path` on docs links |
+| `scroll_depth` | `percent` — 25, 50, 75, 100 |
+
+Both come from one delegated listener in `src/scripts/analytics.ts`, reading
+`data-cta` / `data-placement` off the anchors. **Tagging a new outbound link is
+two attributes; there is no handler to add.**
+
 ## Deploy
 
 Cloudflare Pages builds `npm run build` and serves `dist/`. The production branch
-is `master`; every push to it triggers a deploy.
+is `master`; every push to it triggers a deploy. It needs
+`PUBLIC_GA_MEASUREMENT_ID` in its environment — see [Analytics](#analytics).
 
 ## License
 

@@ -17,6 +17,7 @@
     "sync:upstream:check": "node scripts/sync-from-upstream.mjs --check"
   },
   "dependencies": {
-    "astro": "^7.0.2"
+    "astro": "^7.0.2",
+    "vanilla-cookieconsent": "3.1.0"
   }
 }
