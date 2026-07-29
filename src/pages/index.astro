@@ -244,7 +244,27 @@ const jsonLd = {
 						teams actually miss when they leave the big platforms.
 					</p>
 				</div>
+				<!--
+				  Card order is deliberate: search leads, and the two cards whose
+				  demos need the room — search and polls — span two columns, which
+				  also lands the ten cards on four full rows instead of leaving an
+				  orphan. Both spans collapse below 1040px; see .feature-card--wide.
+				-->
 				<div class="feature-grid">
+					<div class="feature-card feature-card--wide">
+						<div class="feature-demo demo-col">
+							<div class="demo-row">
+								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+								<span class="demo-text">roadmap <span class="faint">— 23 messages in 4 channels</span></span>
+							</div>
+							<div class="demo-row demo-row--wrap">
+								<span class="reaction reaction--on">from:maya</span>
+								<span class="reaction">has:file</span>
+								<span class="reaction">#product-launch</span>
+							</div>
+						</div>
+						<div class="feature-text"><span class="feature-name">Search that filters</span><span class="feature-desc">Full-text search over every channel, thread and DM you can see, then narrow it by author, channel, date, or <strong>has:file</strong> to find the attachment you half-remember. Pinned in the dock, instant at any history size.</span></div>
+					</div>
 					<div class="feature-card">
 						<div class="feature-demo demo-col">
 							<span class="demo-text">Reminder: retro moved to Thursday.</span>
@@ -271,6 +291,44 @@ const jsonLd = {
 							</span>
 						</div>
 						<div class="feature-text"><span class="feature-name">Threads &amp; group DMs</span><span class="feature-desc">Side conversations stay at the side. Channels stay readable.</span></div>
+					</div>
+					<div class="feature-card">
+						<div class="feature-demo demo-row">
+							<span class="reaction reaction--on">@design</span>
+							<span class="stack"><span class="stack-a stack-a--sm"></span><span class="stack-b stack-b--sm"></span></span>
+							<span class="demo-text">notifies all 6</span>
+						</div>
+						<div class="feature-text"><span class="feature-name">User groups &amp; group mentions</span><span class="feature-desc">Mention <strong>@design</strong> or <strong>@oncall</strong> and everyone in the group hears it. Membership lives in settings, not in your head.</span></div>
+					</div>
+					<div class="feature-card">
+						<div class="feature-demo demo-row">
+							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0"></path><path d="M12 18v4"></path></svg>
+							<!-- played portion of the waveform is the first five bars; the
+							     heights repeat every six, so the pattern needs six rules -->
+							<span class="wave" aria-hidden="true"
+								><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span
+							>
+							<span class="demo-text faint">0:14</span>
+						</div>
+						<div class="feature-text"><span class="feature-name">Voice messages</span><span class="feature-desc">Record straight in the composer when typing it out would take five minutes. Plays back inline, waveform and all.</span></div>
+					</div>
+					<div class="feature-card feature-card--wide">
+						<div class="feature-demo demo-col">
+							<span class="demo-text">Retro on Thursday or Friday?</span>
+							<div class="poll">
+								<div class="poll-row">
+									<span class="poll-label">Thursday</span>
+									<span class="poll-bar"><span class="poll-fill poll-fill--lead"></span></span>
+									<span class="poll-votes">7</span>
+								</div>
+								<div class="poll-row">
+									<span class="poll-label">Friday</span>
+									<span class="poll-bar"><span class="poll-fill"></span></span>
+									<span class="poll-votes">4</span>
+								</div>
+							</div>
+						</div>
+						<div class="feature-text"><span class="feature-name">Polls</span><span class="feature-desc">Ask the channel and count the answers in place, instead of eleven replies and a tally in someone's notes. Polls work in threads, and they show up in unread counts like anything else.</span></div>
 					</div>
 					<div class="feature-card">
 						<div class="feature-demo demo-row">
@@ -1011,6 +1069,24 @@ const jsonLd = {
 				grid-template-columns: repeat(3, 1fr);
 				gap: 14px;
 			}
+			.feature-card--wide {
+				grid-column: span 2;
+			}
+			/*
+			  Two columns before the cards get cramped. The spans have to go back
+			  to `auto` here: `span 2` in a two-column grid pushes the poll card
+			  onto its own row and leaves a hole beside the voice card, and in the
+			  one-column grid below 860px it would invent a second column outright.
+			  Ten single-width cards divide evenly by two and by one.
+			*/
+			@media (max-width: 1040px) {
+				.feature-grid {
+					grid-template-columns: repeat(2, 1fr);
+				}
+				.feature-card--wide {
+					grid-column: auto;
+				}
+			}
 			.feature-card {
 				border: 1px solid var(--line);
 				border-radius: 14px;
@@ -1037,6 +1113,90 @@ const jsonLd = {
 				align-items: center;
 				gap: 10px;
 			}
+			.demo-row--wrap {
+				flex-wrap: wrap;
+				gap: 6px;
+			}
+			/* voice message waveform: twelve bars, the first five "played" */
+			.wave {
+				display: flex;
+				align-items: center;
+				gap: 3px;
+				height: 20px;
+			}
+			.wave span {
+				width: 3px;
+				border-radius: 2px;
+				background: var(--brass);
+				opacity: 0.3;
+			}
+			.wave span:nth-child(-n + 5) {
+				opacity: 1;
+			}
+			.wave span:nth-child(6n + 1) {
+				height: 7px;
+			}
+			.wave span:nth-child(6n + 2) {
+				height: 14px;
+			}
+			.wave span:nth-child(6n + 3) {
+				height: 20px;
+			}
+			.wave span:nth-child(6n + 4) {
+				height: 11px;
+			}
+			.wave span:nth-child(6n + 5) {
+				height: 17px;
+			}
+			.wave span:nth-child(6n) {
+				height: 8px;
+			}
+			/* poll: two options, the bar carries the share and the count states it */
+			.poll {
+				display: flex;
+				flex-direction: column;
+				gap: 7px;
+			}
+			.poll-row {
+				display: flex;
+				align-items: center;
+				gap: 9px;
+				font-size: 11.5px;
+			}
+			.poll-label {
+				width: 58px;
+				flex-shrink: 0;
+				font-weight: 600;
+				color: var(--ink);
+			}
+			/* track and runner-up reuse hexes the page already pins (--secondary,
+			   --chart-5) rather than inventing two more greys */
+			.poll-bar {
+				/* capped, then allowed to shrink: full-bleed across the wide card
+				   it reads as a progress bar rather than a poll */
+				flex: 0 1 250px;
+				height: 7px;
+				border-radius: 99px;
+				background: #eeeade;
+				overflow: hidden;
+			}
+			.poll-fill {
+				display: block;
+				height: 100%;
+				width: 36%;
+				border-radius: 99px;
+				background: #d8d2c2;
+			}
+			.poll-fill--lead {
+				width: 64%;
+				background: var(--brass);
+			}
+			.poll-votes {
+				width: 12px;
+				text-align: right;
+				font-weight: 600;
+				color: var(--faint);
+			}
 			.demo-text {
 				font-size: 12px;
 				line-height: 1.45;
@@ -1060,7 +1220,6 @@ const jsonLd = {
 				color: var(--muted);
 			}
 
-			/* self-host */
 			/* on your phone — the capture sits beside the copy that describes it */
 			.phone {
 				background: var(--cream);
@@ -1131,6 +1290,7 @@ const jsonLd = {
 				font-weight: 600;
 			}
 
+			/* self-host */
 			.selfhost {
 				background: var(--dark);
 				color: var(--paper);
