@@ -11,6 +11,9 @@ const site = 'https://thedeskhq.app';
 const github = 'https://github.com/deskhq/the-desk';
 const docs = 'https://docs.thedeskhq.app/';
 const installGuide = 'https://docs.thedeskhq.app/self-hosting/installation/';
+// A live instance seeded with the demo workspace; its login page prints the
+// shared credentials, so nothing on the page should promise a signup flow.
+const demo = 'https://demo.thedeskhq.app/';
 const title = 'The Desk — Self-hosted team chat that lives on your own server';
 const description =
 	'The Desk is a calm, fast, open-source team chat app you host yourself — a self-hosted Slack alternative with channels, threads, reminders, and scheduled messages. One container, your hardware, your data.';
@@ -75,6 +78,7 @@ const jsonLd = {
 				<nav class="nav-links">
 					<a class="nav-link" href="#features">Features</a>
 					<a class="nav-link" href="#selfhost">Self-hosting</a>
+					<a class="nav-link" href={demo} target="_blank" rel="noopener">Live demo</a>
 					<a class="nav-link" href={docs}>Docs</a>
 					<a class="btn btn-dark btn-sm" href={github}>
 						<svg width="13" height="13" viewBox="0 0 24 24" fill="#f3efe4" aria-hidden="true"
@@ -118,8 +122,11 @@ const jsonLd = {
 								><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg
 							>
 						</a>
-						<a class="btn btn-outline btn-lg" href="#features">See the app</a>
+						<a class="btn btn-outline btn-lg" href={demo} target="_blank" rel="noopener">Try the live demo</a>
 					</div>
+					<p class="hero-demo-note">
+						No signup, no install — the demo's login page shows the shared credentials.
+					</p>
 					<div class="hero-install">
 						<span class="mono-chip">docker compose pull &amp;&amp; docker compose up -d</span>
 						<span>and it's installed. Prebuilt image, no build step.</span>
@@ -352,6 +359,9 @@ const jsonLd = {
 						Star on GitHub
 					</a>
 				</div>
+				<p class="cta-note">
+					Not ready to install? <a href={demo} target="_blank" rel="noopener">Try the live demo</a> — no signup, credentials are on the login page.
+				</p>
 			</div>
 		</section>
 
@@ -367,6 +377,7 @@ const jsonLd = {
 					<span class="footer-copy">The Desk · MIT License</span>
 				</div>
 				<nav class="footer-links">
+					<a href={demo} target="_blank" rel="noopener">Live demo</a>
 					<a href={docs}>Docs</a>
 					<a href={github}>GitHub</a>
 					<a href={`${github}/releases`}>Changelog</a>
@@ -394,12 +405,14 @@ const jsonLd = {
 				<div class="mobile-links">
 					<a href="#features">Features <svg viewBox="0 0 24 24" fill="none" stroke="#b3ab97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
 					<a href="#selfhost">Self-hosting <svg viewBox="0 0 24 24" fill="none" stroke="#b3ab97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
+					<a href={demo} target="_blank" rel="noopener">Live demo <svg viewBox="0 0 24 24" fill="none" stroke="#b3ab97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
 					<a href={docs}>Docs <svg viewBox="0 0 24 24" fill="none" stroke="#b3ab97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
 					<a href={`${github}/releases`}>Changelog <svg viewBox="0 0 24 24" fill="none" stroke="#b3ab97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
 					<a href={`${github}/discussions`}>Community <svg viewBox="0 0 24 24" fill="none" stroke="#b3ab97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
 				</div>
 				<div class="mobile-cta">
 					<a class="btn btn-dark btn-block" href={installGuide}>Deploy in 5 minutes</a>
+					<a class="btn btn-outline btn-block" href={demo} target="_blank" rel="noopener">Try the live demo</a>
 					<a class="btn btn-outline btn-block" href={github}>
 						<svg width="15" height="15" viewBox="0 0 24 24" fill="#665f4e" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.58 9.58 0 0 1 12 6.84c.85 0 1.71.11 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85V21c0 .27.16.58.67.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"></path></svg>
 						Star on GitHub
@@ -651,6 +664,11 @@ const jsonLd = {
 				display: flex;
 				align-items: center;
 				gap: 12px;
+			}
+			.hero-demo-note {
+				margin-top: 12px;
+				font-size: 12.5px;
+				color: var(--faint);
 			}
 			.hero-install {
 				margin-top: 16px;
@@ -1129,6 +1147,22 @@ const jsonLd = {
 				align-items: center;
 				gap: 12px;
 			}
+			.cta-note {
+				margin-top: 18px;
+				font-size: 13px;
+				color: var(--faint);
+				max-width: 440px;
+				line-height: 1.6;
+			}
+			.cta-note a {
+				color: var(--ink);
+				text-decoration: underline;
+				text-underline-offset: 2px;
+				text-decoration-color: var(--brass-mid);
+			}
+			.cta-note a:hover {
+				text-decoration-color: var(--brass);
+			}
 
 			/* footer */
 			.footer {
@@ -1255,6 +1289,12 @@ const jsonLd = {
 				.hero-actions .btn {
 					width: 100%;
 					height: 48px;
+				}
+				/* sits between the stretched buttons and the centred install
+				   chip, so it centres with them rather than hanging left */
+				.hero-demo-note {
+					align-self: center;
+					text-align: center;
 				}
 				.hero-install {
 					align-self: center;
