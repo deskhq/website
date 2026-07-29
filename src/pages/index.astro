@@ -1,6 +1,12 @@
 ---
 // Standalone marketing landing page for The Desk, served from the apex.
 // The documentation lives on its own origin at https://docs.thedeskhq.app.
+
+// The app's palette, generated out of deskhq/the-desk's app.css. Never edit it
+// here — run `npm run sync:upstream`. The semantic aliases below map this
+// page's vocabulary onto those tokens.
+import '../styles/tokens.css';
+
 const site = 'https://thedeskhq.app';
 const github = 'https://github.com/deskhq/the-desk';
 const docs = 'https://docs.thedeskhq.app/';
@@ -120,89 +126,23 @@ const jsonLd = {
 					</div>
 				</div>
 
-				<!-- mini 3-pane workspace preview -->
+				<!--
+				  The real shell, synced from deskhq/the-desk's `bin/capture-shell`
+				  output. Intrinsic width/height are the captures' true pixel sizes so
+				  the hero reserves its box before the image lands.
+				-->
 				<div class="preview">
-					<div class="preview-panes">
-						<!-- dock -->
-						<div class="pane pane-dock">
-							<div class="dock-head">
-								<svg width="18" height="18" viewBox="0 0 40 40" aria-hidden="true">
-									<polygon points="20,18 36,27 20,36 4,27" fill="#1d1a15" opacity="0.4"></polygon>
-									<polygon points="20,11 36,20 20,29 4,20" fill="#1d1a15" opacity="0.7"></polygon>
-									<polygon points="20,4 36,13 20,22 4,13" fill="#c9a35c"></polygon>
-								</svg>
-								<span class="serif dock-team">Acme Co</span>
-								<svg class="ml-auto" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9b937f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
-							</div>
-							<div class="dock-label">Channels</div>
-							<div class="dock-item"><span class="hash-faint">#</span> general</div>
-							<div class="dock-item dock-item--active"><span class="hash-brass">#</span> design</div>
-							<div class="dock-item"><span class="hash-faint">#</span> engineering <span class="badge-count">3</span></div>
-							<div class="dock-item"><span class="hash-faint">#</span> releases</div>
-							<div class="dock-label">Direct messages</div>
-							<div class="dock-item"><span class="dot dot--on"></span> Jonah Kim</div>
-							<div class="dock-item"><span class="dot dot--off"></span> Priya Okafor</div>
-						</div>
-
-						<!-- timeline -->
-						<div class="pane pane-timeline">
-							<div class="tl-head">
-								<span class="serif tl-title"><span class="hash-brass">#</span> design</span>
-								<span class="tl-sub">· 12 members</span>
-							</div>
-							<div class="tl-body">
-								<div class="msg">
-									<div class="avatar av-gold">JK</div>
-									<div class="msg-body">
-										<span class="msg-meta"><span class="msg-name">Jonah Kim</span> <span class="msg-time">10:42 AM</span></span>
-										<span class="msg-text">New brand files are up. Grab the logo pack before tomorrow's review.</span>
-										<span class="reactions">
-											<span class="reaction reaction--on">👍 4</span>
-											<span class="reaction">🎉 2</span>
-										</span>
-									</div>
-								</div>
-								<div class="msg">
-									<div class="avatar av-green">TB</div>
-									<div class="msg-body">
-										<span class="msg-meta"><span class="msg-name">Tessa Brandt</span> <span class="msg-time">10:45 AM</span></span>
-										<span class="msg-text">Looks great. Starting a thread for the icon feedback.</span>
-										<span class="thread-link">
-											<span class="stack">
-												<span class="stack-a"></span><span class="stack-b"></span>
-											</span>
-											5 replies · last reply 12 min ago
-										</span>
-									</div>
-								</div>
-								<div class="msg">
-									<div class="avatar av-ink">MR</div>
-									<div class="msg-body">
-										<span class="msg-meta"><span class="msg-name">Maya Rivera</span> <span class="msg-time">10:51 AM</span></span>
-										<span class="msg-text">Scheduling the go/no-go post for Monday 9 AM so nobody gets pinged over the weekend.</span>
-										<span class="scheduled-pill">
-											<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-											Scheduled · Mon 9:00 AM
-										</span>
-									</div>
-								</div>
-							</div>
-							<div class="tl-composer">Message #design…</div>
-						</div>
-
-						<!-- thread pane -->
-						<div class="pane pane-thread">
-							<div class="thread-head">
-								<span class="serif">Thread</span>
-								<svg class="ml-auto" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9b937f" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-							</div>
-							<div class="thread-body">
-								<div class="thread-msg"><div class="avatar avatar-sm av-green">TB</div><span class="thread-text">Icon feedback here please, especially the favicon at 16px.</span></div>
-								<div class="thread-msg"><div class="avatar avatar-sm av-rose">SL</div><span class="thread-text">Brass plane reads well even tiny. Ship it.</span></div>
-								<div class="thread-msg"><div class="avatar avatar-sm av-gold">JK</div><span class="thread-text">Agreed 🔥</span></div>
-							</div>
-						</div>
-					</div>
+					<picture>
+						<source srcset="/shell/mobile-light.png" media="(max-width: 767px)" width="780" height="1688" />
+						<img
+							src="/shell/desktop-light.png"
+							alt="The Desk's workspace: an icon rail, the channel dock, and the #product-launch channel with a pinned message, reactions and a thread"
+							width="2880"
+							height="1800"
+							fetchpriority="high"
+							decoding="async"
+						/>
+					</picture>
 				</div>
 			</div>
 		</section>
@@ -213,16 +153,34 @@ const jsonLd = {
 				<div class="section-head showcase-head">
 					<span class="eyebrow eyebrow--gold">See it in action</span>
 					<h2 class="serif section-title showcase-title">Your whole workspace, quietly in one&nbsp;place</h2>
-					<p class="section-lede">Channels, threads, reactions, and direct messages: the real app, not a mockup.</p>
+					<p class="section-lede">
+						Channels, threads, reactions, and direct messages: the real app, not a mockup. Light and
+						dark both ship, on desktop and on mobile.
+					</p>
 				</div>
+				<!--
+				  Same synced captures as the hero, uncropped, and following the
+				  reader's theme: dark preference gets the dark shot.
+				-->
 				<div class="showcase-frame">
-					<img
-						src="/screenshot-app.png"
-						alt="The Desk workspace: the #design channel with a threaded conversation, reactions, and the channel sidebar"
-						width="1440"
-						height="900"
-						loading="lazy"
-					/>
+					<picture>
+						<source
+							srcset="/shell/mobile-dark.png"
+							media="(max-width: 767px) and (prefers-color-scheme: dark)"
+							width="780"
+							height="1688"
+						/>
+						<source srcset="/shell/desktop-dark.png" media="(prefers-color-scheme: dark)" width="2880" height="1800" />
+						<source srcset="/shell/mobile-light.png" media="(max-width: 767px)" width="780" height="1688" />
+						<img
+							src="/shell/desktop-light.png"
+							alt="The Desk workspace: the icon rail and channel dock beside the #product-launch channel, with reactions, a pinned message and a thread"
+							width="2880"
+							height="1800"
+							loading="lazy"
+							decoding="async"
+						/>
+					</picture>
 				</div>
 			</div>
 		</section>
@@ -470,21 +428,33 @@ const jsonLd = {
 		</script>
 
 		<style is:global>
+			/*
+			  This page's vocabulary, mapped onto the app's tokens from
+			  tokens.css. Every colour the app also has is inherited, so a
+			  palette change upstream lands here on the next sync instead of
+			  being retyped. The page's layout and marketing styling stay
+			  hand-written; only the palette is inherited.
+			*/
 			:root {
-				--cream: #f2f0eb;
-				--ink: #1d1a15;
-				--paper: #f3efe4;
-				--muted: #665f4e;
+				--cream: var(--app-background);
+				--ink: var(--app-foreground);
+				--paper: var(--app-primary-foreground);
+				--muted: var(--app-muted-foreground);
+				--line: var(--app-border);
+				--brass: var(--app-brass);
+				--brass-ink: var(--app-chart-2);
+				--brass-mid: var(--app-brass-border);
+				--card: var(--app-card);
+				--card-soft: var(--app-popover);
+
+				/* The dark sections of this light page borrow the app's dark theme. */
+				--dark: var(--app-dark-background);
+				--panel: var(--app-dark-card);
+				--panel-line: var(--app-dark-border);
+
+				/* Site-only. The app has no light-theme tertiary text token —
+				   its faintest light value, --chart-4, is a chart colour. */
 				--faint: #9b937f;
-				--line: #e3dfd5;
-				--brass: #c9a35c;
-				--brass-ink: #7d6023;
-				--brass-mid: #b98e3f;
-				--dark: #12100c;
-				--panel: #1a1712;
-				--panel-line: #2e2a21;
-				--card: #fefdfb;
-				--card-soft: #fbfaf7;
 			}
 			* {
 				box-sizing: border-box;
@@ -518,9 +488,6 @@ const jsonLd = {
 			}
 			.faint {
 				color: var(--faint);
-			}
-			.ml-auto {
-				margin-left: auto;
 			}
 			.wrap {
 				max-width: 1120px;
@@ -703,7 +670,7 @@ const jsonLd = {
 				padding: 3px 9px;
 			}
 
-			/* hero preview */
+			/* hero preview — frames the synced desktop/mobile capture */
 			.preview {
 				align-self: end;
 				width: 880px;
@@ -711,210 +678,26 @@ const jsonLd = {
 				border: 1px solid #d8d4ca;
 				border-bottom: none;
 				border-radius: 16px 16px 0 0;
-				background: #e7e4dd;
-				padding: 12px 12px 0;
+				overflow: hidden;
+				background: var(--cream);
 				box-shadow: 0 -8px 40px rgba(60, 55, 40, 0.08);
 			}
-			.preview-panes {
-				display: flex;
-				gap: 10px;
-				height: 460px;
-				overflow: hidden;
-			}
-			.pane {
-				background: var(--card-soft);
-				border: 1px solid var(--line);
-				border-bottom: none;
-				border-radius: 12px 12px 0 0;
-				text-align: left;
-				overflow: hidden;
-			}
-			.pane-dock {
-				width: 200px;
-				flex-shrink: 0;
-				padding: 14px 10px;
-				display: flex;
-				flex-direction: column;
-				gap: 2px;
-			}
-			.pane-timeline {
-				flex: 1;
-				min-width: 0;
-				display: flex;
-				flex-direction: column;
-			}
-			.pane-thread {
-				width: 250px;
-				flex-shrink: 0;
-				display: flex;
-				flex-direction: column;
-			}
-			.dock-head {
-				display: flex;
-				align-items: center;
-				gap: 8px;
-				padding: 0 8px 12px;
-			}
-			.dock-team {
-				font-size: 14px;
-				font-weight: 600;
-			}
-			.dock-label {
-				display: flex;
-				align-items: center;
-				height: 24px;
-				padding: 0 8px;
-				font-size: 9.5px;
-				font-weight: 650;
-				letter-spacing: 0.1em;
-				text-transform: uppercase;
-				color: #b3ab97;
-			}
-			.dock-label + .dock-item {
-				margin-top: 0;
-			}
-			.dock-label:not(:first-of-type) {
-				padding-top: 12px;
+			.preview img {
+				width: 100%;
 				height: auto;
-				padding-bottom: 4px;
 			}
-			.dock-item {
-				display: flex;
-				align-items: center;
-				gap: 7px;
-				height: 27px;
-				padding: 0 8px;
-				border-radius: 8px;
-				font-size: 12.5px;
-				color: var(--muted);
-			}
-			.dock-item--active {
-				background: var(--ink);
-				color: var(--paper);
-				font-weight: 600;
-				box-shadow: 0 2px 5px rgba(29, 26, 21, 0.25);
-			}
-			.hash-faint {
-				color: #b3ab97;
-			}
-			.hash-brass {
-				color: var(--brass);
-			}
-			.badge-count {
-				margin-left: auto;
-				display: inline-flex;
-				align-items: center;
-				justify-content: center;
-				min-width: 17px;
-				height: 17px;
-				border-radius: 99px;
-				background: var(--brass);
-				color: var(--ink);
-				font-size: 10px;
-				font-weight: 700;
-			}
+
+			/* shared with the feature-card demos below */
 			.dot {
 				width: 7px;
 				height: 7px;
 				border-radius: 99px;
-			}
-			.dot--on {
-				background: #5a9367;
-			}
-			.dot--off {
-				background: #d8d2c2;
 			}
 			.dot--brass {
 				width: 8px;
 				height: 8px;
 				background: var(--brass);
 				flex-shrink: 0;
-			}
-			.tl-head {
-				display: flex;
-				align-items: center;
-				gap: 8px;
-				padding: 12px 18px;
-				border-bottom: 1px solid #eeeade;
-			}
-			.tl-title {
-				font-size: 15px;
-				font-weight: 600;
-			}
-			.tl-sub {
-				font-size: 11.5px;
-				color: var(--faint);
-			}
-			.tl-body {
-				flex: 1;
-				padding: 16px 18px;
-				display: flex;
-				flex-direction: column;
-				gap: 14px;
-				overflow: hidden;
-			}
-			.msg {
-				display: flex;
-				gap: 10px;
-			}
-			.avatar {
-				width: 30px;
-				height: 30px;
-				border-radius: 9px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				font-size: 10.5px;
-				font-weight: 650;
-				flex-shrink: 0;
-			}
-			.avatar-sm {
-				width: 24px;
-				height: 24px;
-				border-radius: 7px;
-				font-size: 9px;
-			}
-			.av-gold {
-				background: #e8dcc4;
-				color: var(--brass-ink);
-			}
-			.av-green {
-				background: #d5dcd3;
-				color: #4e6152;
-			}
-			.av-ink {
-				background: var(--ink);
-				color: var(--paper);
-			}
-			.av-rose {
-				background: #e3d5d0;
-				color: #8a5b4e;
-			}
-			.msg-body {
-				display: flex;
-				flex-direction: column;
-				gap: 2px;
-				min-width: 0;
-			}
-			.msg-meta {
-				font-size: 12.5px;
-			}
-			.msg-name {
-				font-weight: 650;
-			}
-			.msg-time {
-				color: #b3ab97;
-				font-size: 11px;
-			}
-			.msg-text {
-				font-size: 13px;
-				line-height: 1.45;
-				color: var(--ink);
-			}
-			.reactions {
-				margin-top: 4px;
-				display: flex;
-				gap: 5px;
 			}
 			.reaction {
 				display: inline-flex;
@@ -988,40 +771,6 @@ const jsonLd = {
 				font-weight: 600;
 				color: var(--brass-ink);
 			}
-			.tl-composer {
-				margin: 0 14px;
-				border: 1px solid #d3cdba;
-				border-bottom: none;
-				border-radius: 10px 10px 0 0;
-				background: var(--card);
-				padding: 10px 12px;
-				font-size: 12.5px;
-				color: var(--faint);
-			}
-			.thread-head {
-				display: flex;
-				align-items: center;
-				gap: 8px;
-				padding: 12px 14px;
-				border-bottom: 1px solid #eeeade;
-				font-size: 14px;
-				font-weight: 600;
-			}
-			.thread-body {
-				padding: 12px 14px;
-				display: flex;
-				flex-direction: column;
-				gap: 12px;
-			}
-			.thread-msg {
-				display: flex;
-				gap: 8px;
-			}
-			.thread-text {
-				font-size: 12px;
-				line-height: 1.45;
-				color: var(--ink);
-			}
 
 			/* showcase */
 			.showcase {
@@ -1060,6 +809,15 @@ const jsonLd = {
 				width: 100%;
 				height: auto;
 				margin: 0 auto;
+			}
+			/* The frame follows the shot it holds, so the dark capture is not
+			   sitting in a paper-coloured card. */
+			@media (prefers-color-scheme: dark) {
+				.showcase-frame {
+					background: var(--app-dark-card);
+					border-color: var(--app-dark-border);
+					box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+				}
 			}
 
 			/* powered by */
@@ -1508,18 +1266,7 @@ const jsonLd = {
 				.preview {
 					width: 100%;
 					margin-top: 32px;
-					padding: 10px 10px 0;
 					border-radius: 14px 14px 0 0;
-				}
-				.preview-panes {
-					height: 320px;
-				}
-				.pane-dock,
-				.pane-thread {
-					display: none;
-				}
-				.pane-timeline {
-					border-radius: 10px 10px 0 0;
 				}
 
 				.powered-grid {

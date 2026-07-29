@@ -21,6 +21,47 @@ npm run build    # production build to dist/
 npm run preview  # preview the built site
 ```
 
+## Product imagery and palette
+
+Nothing on this page draws the app by hand. Both the screenshots and the colours
+are synced out of [`deskhq/the-desk`](https://github.com/deskhq/the-desk), from
+its latest **release tag** — so the site advertises the build an operator can
+actually install, not `master`.
+
+| File | Source |
+| --- | --- |
+| `public/shell/{desktop,mobile}-{light,dark}.png` | `resources/js/images/shell/` — produced upstream by `bin/capture-shell`, which photographs the real shell from the seeded demo workspace against a pinned clock, viewport and locale |
+| `src/styles/tokens.css` | the `:root` and `.dark` blocks of `resources/css/app.css` |
+
+Both are generated. **Do not edit them by hand** — the next sync overwrites
+them. `index.astro` maps its own vocabulary (`--ink`, `--brass`, `--line`, ...)
+onto the `--app-*` tokens in its `:root` block; change that mapping, not the
+tokens.
+
+### Refreshing by hand
+
+```bash
+npm run sync:upstream              # sync from the latest release tag
+npm run sync:upstream -- --ref v1.17.0   # or from a specific ref
+npm run sync:upstream:check        # exit 1 if anything is stale — no writes
+```
+
+Then rebuild and check the hero and the showcase at mobile and desktop widths.
+
+### Automatically
+
+`.github/workflows/sync-shell-captures.yml` runs the same script daily, and on
+demand via **workflow_dispatch** (optionally against a specific ref). When the
+bytes change it opens a PR titled with the upstream tag, so a redesign is
+reviewed and deployed rather than silently swapped. The site can therefore lag a
+redesign by at most one schedule interval.
+
+The same workflow runs `--check` on pull requests. Besides staleness, that
+catches **palette drift**: a handful of hexes cannot be expressed as a `var()`
+(SVG `fill`/`stroke` attributes) or are deliberately literal, and each is pinned
+in `PINNED_HEXES` in `scripts/sync-from-upstream.mjs` against the upstream token
+it copies. If upstream moves one, the check fails and names it.
+
 ## Deploy
 
 Cloudflare Pages builds `npm run build` and serves `dist/`. The production branch

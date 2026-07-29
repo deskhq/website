@@ -1,0 +1,130 @@
+/*
+ * GENERATED FILE — DO NOT EDIT BY HAND.
+ *
+ * The Desk's design tokens, lifted from deskhq/the-desk's resources/css/app.css
+ * at v1.18.0. Refresh with `npm run sync:upstream`; CI refreshes it on a
+ * schedule and opens a PR when upstream moves.
+ *
+ * Upstream's dark palette lives behind a `.dark` class. This site is a single
+ * light document with a few dark sections, so those values are re-exposed here
+ * as `--app-dark-*` and can be used anywhere, no theme class required.
+ */
+:root {
+	/* deskhq/the-desk :root @ v1.18.0 */
+	--app-background: #e7e4dd;
+	--app-foreground: #1d1a15;
+	--app-card: #fefdfb;
+	--app-card-foreground: #1d1a15;
+	--app-popover: #fbfaf7;
+	--app-popover-foreground: #1d1a15;
+	--app-primary: #1d1a15;
+	--app-primary-foreground: #f3efe4;
+	--app-secondary: #eeeade;
+	--app-secondary-foreground: #1d1a15;
+	--app-muted: #f0ece0;
+	--app-muted-foreground: #6b6355;
+	--app-accent: #f0ece0;
+	--app-accent-foreground: #1d1a15;
+	--app-destructive: hsl(0 72% 45%);
+	--app-destructive-foreground: #f3efe4;
+	--app-destructive-text: hsl(0 72% 40%);
+	--app-border: #e3dfd5;
+	--app-input: #e0dbcd;
+	--app-scrim: rgba(29, 26, 21, 0.5);
+	--app-ring: #8a6a1f;
+	--app-brass: #c9a35c;
+	--app-brass-foreground: #1d1a15;
+	--app-brass-border: #b98e3f;
+	--app-brass-fill: rgba(201, 163, 92, 0.14);
+	--app-brass-fill-foreground: #6a521e;
+	--app-demo-banner: #f3eedd;
+	--app-demo-banner-border: #e3d5b3;
+	--app-demo-banner-foreground: #4a4436;
+	--app-demo-banner-strong: #1d1a15;
+	--app-demo-badge: #1d1a15;
+	--app-demo-badge-foreground: #c9a35c;
+	--app-demo-chip: #ffffff;
+	--app-demo-chip-foreground: #7d6023;
+	--app-demo-banner-height: 2.5rem;
+	--app-slab-error: #231a17;
+	--app-slab-muted-foreground: #a49b85;
+	--app-slab-accent: #c9a35c;
+	--app-slab-glyph-success: #86c8a1;
+	--app-slab-glyph-error: #e5917b;
+	--app-slab-glyph-warning: #d9b978;
+	--app-shadow-ink: rgba(29, 26, 21, 0.45);
+	--app-chart-1: #c9a35c;
+	--app-chart-2: #7d6023;
+	--app-chart-3: #8b8370;
+	--app-chart-4: #b3ab97;
+	--app-chart-5: #d8d2c2;
+	--app-radius: 0.875rem;
+	--app-sidebar-background: #fbfaf7;
+	--app-sidebar-foreground: #1d1a15;
+	--app-sidebar-primary: #1d1a15;
+	--app-sidebar-primary-foreground: #f3efe4;
+	--app-sidebar-accent: #f0ece0;
+	--app-sidebar-accent-foreground: #1d1a15;
+	--app-sidebar-border: #e3dfd5;
+	--app-sidebar-ring: #8a6a1f;
+	--app-sidebar: #fbfaf7;
+	--app-sidebar-rail: #eeeade;
+
+	/* deskhq/the-desk .dark @ v1.18.0 */
+	--app-dark-background: #12100c;
+	--app-dark-foreground: #f3efe4;
+	--app-dark-card: #1e1b15;
+	--app-dark-card-foreground: #f3efe4;
+	--app-dark-popover: #1e1b15;
+	--app-dark-popover-foreground: #f3efe4;
+	--app-dark-primary: #f3efe4;
+	--app-dark-primary-foreground: #1d1a15;
+	--app-dark-secondary: #2a271f;
+	--app-dark-secondary-foreground: #f3efe4;
+	--app-dark-muted: #2a271f;
+	--app-dark-muted-foreground: #9d947e;
+	--app-dark-accent: #2e2a21;
+	--app-dark-accent-foreground: #f3efe4;
+	--app-dark-destructive: hsl(0 72% 55%);
+	--app-dark-destructive-foreground: #f3efe4;
+	--app-dark-destructive-text: hsl(0 72% 64%);
+	--app-dark-border: #2e2a21;
+	--app-dark-input: #2a271f;
+	--app-dark-scrim: rgba(0, 0, 0, 0.6);
+	--app-dark-ring: #c9a35c;
+	--app-dark-brass: #c9a35c;
+	--app-dark-brass-foreground: #1d1a15;
+	--app-dark-brass-border: #c9a35c;
+	--app-dark-brass-fill: rgba(201, 163, 92, 0.14);
+	--app-dark-brass-fill-foreground: #dcb56a;
+	--app-dark-demo-banner: rgba(201, 163, 92, 0.12);
+	--app-dark-demo-banner-border: #3a3527;
+	--app-dark-demo-banner-foreground: #cfc9ba;
+	--app-dark-demo-banner-strong: #ece7da;
+	--app-dark-demo-badge: #c9a35c;
+	--app-dark-demo-badge-foreground: #1d1a15;
+	--app-dark-demo-chip: #26231c;
+	--app-dark-demo-chip-foreground: #c9a35c;
+	--app-dark-slab-error: #f7efe9;
+	--app-dark-slab-muted-foreground: #6b6355;
+	--app-dark-slab-accent: #7d6023;
+	--app-dark-slab-glyph-success: #3d7a56;
+	--app-dark-slab-glyph-error: #a13c2f;
+	--app-dark-slab-glyph-warning: #7d6023;
+	--app-dark-shadow-ink: rgba(0, 0, 0, 0.55);
+	--app-dark-chart-1: #d4b06a;
+	--app-dark-chart-2: #b8923f;
+	--app-dark-chart-3: #9b937f;
+	--app-dark-chart-4: #6b6350;
+	--app-dark-chart-5: #46402f;
+	--app-dark-sidebar-background: #1e1b15;
+	--app-dark-sidebar-foreground: #f3efe4;
+	--app-dark-sidebar-primary: #f3efe4;
+	--app-dark-sidebar-primary-foreground: #1d1a15;
+	--app-dark-sidebar-accent: #2e2a21;
+	--app-dark-sidebar-accent-foreground: #f3efe4;
+	--app-dark-sidebar-border: #2e2a21;
+	--app-dark-sidebar-ring: #c9a35c;
+	--app-dark-sidebar: #1e1b15;
+	--app-dark-sidebar-rail: #2a271f;
+}
