@@ -15,6 +15,10 @@ const installGuide = 'https://docs.thedeskhq.app/self-hosting/installation/';
 // deliver them: every claim below is a documented toggle or env block.
 const configGuide = 'https://docs.thedeskhq.app/self-hosting/configuration/';
 const featureToggles = 'https://docs.thedeskhq.app/reference/feature-toggles/';
+// The rendered reference, not the raw YAML: this is where a reader browses
+// operation by operation. The spec itself is published beside it.
+const apiReference = 'https://docs.thedeskhq.app/api-reference/';
+const openapiSpec = 'https://docs.thedeskhq.app/openapi.yaml';
 // A live instance seeded with the demo workspace; its login page prints the
 // shared credentials, so nothing on the page should promise a signup flow.
 const demo = 'https://demo.thedeskhq.app/';
@@ -249,10 +253,11 @@ const jsonLd = {
 					</p>
 				</div>
 				<!--
-				  Card order is deliberate: search leads, and the two cards whose
-				  demos need the room — search and polls — span two columns, which
-				  also lands the ten cards on four full rows instead of leaving an
-				  orphan. Both spans collapse below 1040px; see .feature-card--wide.
+				  Card order is deliberate: search leads, and the three cards whose
+				  demos need the room — search, polls and the API — span two
+				  columns, which also lands the twelve cards on five full rows
+				  instead of leaving an orphan. Twelve divides evenly at two and
+				  one column, where the spans collapse; see .feature-card--wide.
 				-->
 				<div class="feature-grid">
 					<div class="feature-card feature-card--wide">
@@ -355,6 +360,30 @@ const jsonLd = {
 							<span class="demo-text">Analytics, audit log, roles &amp; invitations</span>
 						</div>
 						<div class="feature-text"><span class="feature-name">Roles, analytics &amp; moderation</span><span class="feature-desc">Team analytics, a moderation audit log, roles and invitations, and session management. Identity and audit get their own section below.</span></div>
+					</div>
+					<div class="feature-card feature-card--wide">
+						<div class="feature-demo demo-col">
+							<span class="mono-chip mono-chip--wrap">curl -O https://docs.thedeskhq.app/openapi.yaml</span>
+							<div class="demo-row demo-row--wrap">
+								<span class="reaction reaction--on">REST v1</span>
+								<span class="reaction">OpenAPI 3.1</span>
+								<span class="reaction">scoped bot tokens</span>
+							</div>
+						</div>
+						<div class="feature-text"
+							><span class="feature-name">A REST API, not a scraping project</span
+							><span class="feature-desc"
+								>A versioned public API under <strong>/api/v1</strong>, described by an OpenAPI 3.1 document that a test keeps in lockstep with the routes — so the spec cannot quietly drift from the running code. Browse the <a href={apiReference} target="_blank" rel="noopener">API reference</a>, or point a generator at the <a href={openapiSpec} target="_blank" rel="noopener">spec</a> and get a typed client in your language.</span
+							></div
+						>
+					</div>
+					<div class="feature-card">
+						<div class="feature-demo demo-row">
+							<span class="reaction reaction--on">bot</span>
+							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+							<span class="demo-text">signed POST to your endpoint</span>
+						</div>
+						<div class="feature-text"><span class="feature-name">Bots &amp; webhooks</span><span class="feature-desc">Give a bot scoped tokens and subscribe it to events, per channel if you like: deliveries are signed, retried, and disabled when your endpoint stops answering. Incoming webhooks go the other way — one secret URL posts into a channel.</span></div>
 					</div>
 				</div>
 			</div>
@@ -1280,6 +1309,20 @@ const jsonLd = {
 				font-size: 13px;
 				line-height: 1.55;
 				color: var(--muted);
+			}
+			.feature-desc a {
+				color: var(--ink);
+				text-decoration: underline;
+				text-underline-offset: 2px;
+				text-decoration-color: var(--brass-mid);
+			}
+			.feature-desc a:hover {
+				text-decoration-color: var(--brass);
+			}
+			/* the curl line is longer than a one-column card is wide */
+			.mono-chip--wrap {
+				align-self: flex-start;
+				overflow-wrap: anywhere;
 			}
 
 			/* on your phone — the capture sits beside the copy that describes it */
