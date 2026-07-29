@@ -51,21 +51,43 @@ const PINNED_HEXES = [
 	['#2e2a21', 'dark', '--border'], // dark-section hairline
 ];
 
+// The self-hosting section names the languages the interface ships in. `lang/`
+// upstream is the source of truth, so `--check` fails when a locale is added or
+// removed and the copy has not followed — the same guard the hexes get, for the
+// same reason: a claim retyped onto the page drifts silently otherwise.
+const LOCALES = [
+	['en', 'English'],
+	['fr', 'French'],
+];
+
 const args = process.argv.slice(2);
 const check = args.includes('--check');
 const refArg = args.includes('--ref') ? args[args.indexOf('--ref') + 1] : null;
 
-/** Latest published release tag, so we track shipped builds and not master. */
-async function latestReleaseTag() {
-	const res = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`, {
+async function githubApi(path, what) {
+	const res = await fetch(`https://api.github.com/repos/${REPO}/${path}`, {
 		headers: {
 			accept: 'application/vnd.github+json',
 			'user-agent': 'deskhq-website-sync',
 			...(process.env.GITHUB_TOKEN ? { authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}),
 		},
 	});
-	if (!res.ok) throw new Error(`GitHub API ${res.status} resolving the latest ${REPO} release`);
-	return (await res.json()).tag_name;
+	if (!res.ok) throw new Error(`GitHub API ${res.status} ${what}`);
+	return res.json();
+}
+
+/** Latest published release tag, so we track shipped builds and not master. */
+async function latestReleaseTag() {
+	return (await githubApi('releases/latest', `resolving the latest ${REPO} release`)).tag_name;
+}
+
+/** The locale directories under `lang/` at `ref`. */
+async function upstreamLocales(ref) {
+	const entries = await githubApi(`contents/lang?ref=${ref}`, `listing lang/ at ${ref}`);
+	return entries
+		.filter((entry) => entry.type === 'dir')
+		.map((entry) => entry.name)
+		.sort();
 }
 
 async function fetchUpstream(ref, path) {
@@ -200,6 +222,29 @@ async function main() {
 		console.log(`  ok      ${PINNED_HEXES.length} pinned hexes in index.astro match upstream`);
 	}
 
+	// --- the locales the page claims -------------------------------------
+	const shipped = await upstreamLocales(ref);
+	const claimed = LOCALES.map(([code]) => code).sort();
+	const localeIssues = [];
+	if (shipped.join() !== claimed.join()) {
+		localeIssues.push(
+			`lang/ ships [${shipped.join(', ')}] at ${ref}, but index.astro is written for [${claimed.join(', ')}] — update the copy and LOCALES together`,
+		);
+	}
+	for (const [code, name] of LOCALES) {
+		if (!page.includes(name)) {
+			localeIssues.push(`LOCALES maps ${code} to "${name}", but index.astro never says "${name}"`);
+		}
+	}
+
+	if (localeIssues.length) {
+		console.error('\nLocale drift — the languages named on the page are not the ones that ship:');
+		for (const line of localeIssues) console.error(`  - ${line}`);
+		drifted.push(...localeIssues);
+	} else {
+		console.log(`  ok      index.astro names the ${shipped.length} locales in lang/ (${shipped.join(', ')})`);
+	}
+
 	// Report the tag, whether anything moved, and any drift, so the workflow can
 	// title the PR and surface the drift in its body. Written before the
 	// `--check` exit so a failing check still explains itself.
@@ -208,7 +253,7 @@ async function main() {
 		// Pre-rendered so the workflow can drop it straight into the PR body —
 		// GitHub Actions expressions cannot build a multi-line string.
 		const drift = drifted.length
-			? ['> [!WARNING]', '> Palette drift — `index.astro` no longer matches upstream:', '>']
+			? ['> [!WARNING]', '> Upstream drift — `index.astro` no longer matches upstream:', '>']
 					.concat(drifted.map((d) => `> - ${d}`))
 					.join('\n')
 			: '';
@@ -229,7 +274,7 @@ async function main() {
 
 	// Outside `--check`, drift is reported but does not abort: the captures still
 	// need to land, and the PR is where a human should see the palette change.
-	if (drifted.length) console.error('\nPalette drift reported above — update index.astro by hand.');
+	if (drifted.length) console.error('\nDrift reported above — update index.astro by hand.');
 	console.log(stale.length ? `\n${stale.length} file(s) updated.` : '\nEverything already current.');
 }
 
