@@ -19,6 +19,8 @@ const featureToggles = 'https://docs.thedeskhq.app/reference/feature-toggles/';
 // operation by operation. The spec itself is published beside it.
 const apiReference = 'https://docs.thedeskhq.app/api-reference/';
 const openapiSpec = 'https://docs.thedeskhq.app/openapi.yaml';
+const brandingGuide = 'https://docs.thedeskhq.app/self-hosting/branding/';
+const dokployGuide = 'https://docs.thedeskhq.app/self-hosting/dokploy/';
 // A live instance seeded with the demo workspace; its login page prints the
 // shared credentials, so nothing on the page should promise a signup flow.
 const demo = 'https://demo.thedeskhq.app/';
@@ -517,11 +519,24 @@ const jsonLd = {
 						</li>
 						<li>
 							<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+							<span><strong>Your name on it.</strong> Set the instance name, drop your marks into a mounted directory, drop the attribution line. Read at runtime, so it takes no fork, no rebuild and no custom image — <a href={brandingGuide} target="_blank" rel="noopener">the branding guide</a> is three settings long.</span>
+						</li>
+						<li>
+							<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
 							<span><strong>Boring, auditable stack.</strong> Laravel, Vue, Postgres, Reverb, Meilisearch. No build step. Read every line on GitHub.</span>
 						</li>
 						<li>
 							<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
 							<span><strong>Hardened before you touch it.</strong> A real content security policy, HSTS on secure responses, framing denied by default, secure session cookies. Defaults, not a checklist you work through.</span>
+						</li>
+						<!--
+						  Two locales is two locales. `lang/` upstream is the source of
+						  truth and scripts/sync-from-upstream.mjs fails when this line
+						  and that directory disagree — do not add a language here first.
+						-->
+						<li>
+							<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+							<span><strong>English and French.</strong> The interface is translated, down to role labels and export copy, and each person picks their language and a 12- or 24-hour clock.</span>
 						</li>
 						<li>
 							<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
@@ -543,6 +558,8 @@ const jsonLd = {
 						<div><span class="ok">✓</span> The Desk is live at <span class="ok">https://desk.your-domain.com</span></div>
 						<div class="cursor-line"><span class="prompt">$</span> <span class="cursor"></span></div>
 					</div>
+					<!-- compose stays the headline path; the PaaS route is the footnote -->
+					<p class="terminal-note">Would rather not hand-manage a VPS? The repo also ships a Dokploy compose file — four screens of settings, no YAML editing. <a href={dokployGuide} target="_blank" rel="noopener">Deploying on Dokploy</a>.</p>
 				</div>
 			</div>
 		</section>
@@ -1518,6 +1535,30 @@ const jsonLd = {
 			}
 			.checklist strong {
 				color: var(--paper);
+			}
+			.checklist a {
+				color: var(--paper);
+				text-decoration: underline;
+				text-underline-offset: 2px;
+				text-decoration-color: var(--brass-mid);
+			}
+			.checklist a:hover {
+				text-decoration-color: var(--brass);
+			}
+			.terminal-note {
+				margin-top: 16px;
+				font-size: 12.5px;
+				line-height: 1.6;
+				color: #8b8370;
+			}
+			.terminal-note a {
+				color: #dedad0;
+				text-decoration: underline;
+				text-underline-offset: 2px;
+				text-decoration-color: var(--brass-mid);
+			}
+			.terminal-note a:hover {
+				text-decoration-color: var(--brass);
 			}
 			.terminal {
 				border: 1px solid var(--panel-line);

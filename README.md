@@ -57,10 +57,16 @@ reviewed and deployed rather than silently swapped. The site can therefore lag a
 redesign by at most one schedule interval.
 
 The same workflow runs `--check` on pull requests. Besides staleness, that
-catches **palette drift**: a handful of hexes cannot be expressed as a `var()`
-(SVG `fill`/`stroke` attributes) or are deliberately literal, and each is pinned
-in `PINNED_HEXES` in `scripts/sync-from-upstream.mjs` against the upstream token
-it copies. If upstream moves one, the check fails and names it.
+catches two kinds of drift in `scripts/sync-from-upstream.mjs`:
+
+- **Palette drift.** A handful of hexes cannot be expressed as a `var()` (SVG
+  `fill`/`stroke` attributes) or are deliberately literal, and each is pinned in
+  `PINNED_HEXES` against the upstream token it copies. If upstream moves one,
+  the check fails and names it.
+- **Locale drift.** The self-hosting section names the languages the interface
+  ships in. `LOCALES` pins those against `lang/` upstream, so adding or removing
+  a locale there fails the check until the copy follows. Two locales is two
+  locales — the page must not round up.
 
 ## Deploy
 
