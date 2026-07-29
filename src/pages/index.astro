@@ -11,6 +11,10 @@ const site = 'https://thedeskhq.app';
 const github = 'https://github.com/deskhq/the-desk';
 const docs = 'https://docs.thedeskhq.app/';
 const installGuide = 'https://docs.thedeskhq.app/self-hosting/installation/';
+// Identity and hardening are claimed on this page, so link the settings that
+// deliver them: every claim below is a documented toggle or env block.
+const configGuide = 'https://docs.thedeskhq.app/self-hosting/configuration/';
+const featureToggles = 'https://docs.thedeskhq.app/reference/feature-toggles/';
 // A live instance seeded with the demo workspace; its login page prints the
 // shared credentials, so nothing on the page should promise a signup flow.
 const demo = 'https://demo.thedeskhq.app/';
@@ -350,7 +354,7 @@ const jsonLd = {
 							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 3v18h18"></path><path d="M7 14l4-4 3 3 5-6"></path></svg>
 							<span class="demo-text">Analytics, audit log, roles &amp; invitations</span>
 						</div>
-						<div class="feature-text"><span class="feature-name">Real admin tools</span><span class="feature-desc">Team analytics, a moderation audit log, roles, and session management, all included.</span></div>
+						<div class="feature-text"><span class="feature-name">Roles, analytics &amp; moderation</span><span class="feature-desc">Team analytics, a moderation audit log, roles and invitations, and session management. Identity and audit get their own section below.</span></div>
 					</div>
 				</div>
 			</div>
@@ -412,6 +416,60 @@ const jsonLd = {
 			</div>
 		</section>
 
+		<!-- ============================ IDENTITY & AUDIT ============================ -->
+		<!--
+		  Every claim in here is a documented setting — the SSO, LDAP and SCIM
+		  blocks in the configuration guide, and the passkey toggle in the
+		  feature-toggle reference. Do not add a claim the docs do not cover:
+		  the footnote links both pages, so a reader can check.
+		-->
+		<section id="security" class="trust">
+			<div class="wrap trust-inner">
+				<div class="section-head">
+					<span class="eyebrow eyebrow--gold">Identity, access &amp; audit</span>
+					<h2 class="serif section-title">The parts your IT review asks about</h2>
+					<p class="section-lede">
+						Self-hosting is the easy half of the approval. The rest is whether it plugs into the
+						directory you already run and leaves a trail afterwards. It does, and both are settings,
+						not a paid tier.
+					</p>
+				</div>
+				<div class="trust-grid">
+					<div class="trust-card">
+						<div class="trust-head">
+							<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 5.5v6c0 4.6 3.2 8.7 8 10.5 4.8-1.8 8-5.9 8-10.5v-6z"></path><path d="m9 12 2 2 4-4"></path></svg>
+							<span class="trust-name">Identity</span>
+						</div>
+						<ul class="trust-list">
+							<li><strong>Single sign-on</strong> over OpenID Connect, with an SSO-only mode when local passwords should stop being an option.</li>
+							<li><strong>LDAP and Active Directory</strong> sign-in against the directory you already run.</li>
+							<li><strong>SCIM 2.0 provisioning</strong>, so an account closed in the directory closes here too.</li>
+							<!-- PASSKEYS_ENABLED and TWO_FACTOR_AUTH_ENABLED both default to
+							     false upstream, so this says "switch on", not "ships on" -->
+							<li><strong>Passkeys and two-factor</strong> — WebAuthn sign-in and TOTP, each one flag to switch on, with a prompt to add a passkey after registering.</li>
+						</ul>
+					</div>
+					<div class="trust-card">
+						<div class="trust-head">
+							<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"></path><path d="M14 2v5h5"></path><path d="M9 13h6"></path><path d="M9 17h4"></path></svg>
+							<span class="trust-name">Accountability</span>
+						</div>
+						<ul class="trust-list">
+							<li><strong>A security event log</strong> — sign-ins, changes to access — pruned on a retention schedule rather than kept forever.</li>
+							<li><strong>Audit exports</strong> for when someone needs the record in a file, not on a screen.</li>
+							<li><strong>Per-user data export</strong>, generated on request and purged when it expires.</li>
+							<li><strong>Sessions and roles</strong> you can actually see and revoke, alongside the moderation audit log.</li>
+						</ul>
+					</div>
+				</div>
+				<!-- links stay on the text's own line: Astro trims the whitespace
+				     between a line break and an element, which eats the space -->
+				<p class="trust-note">
+					None of this is a plan you upgrade to. It's the <a href={configGuide} target="_blank" rel="noopener">configuration guide</a> and the <a href={featureToggles} target="_blank" rel="noopener">feature toggles</a> — read them before you believe this page.
+				</p>
+			</div>
+		</section>
+
 		<!-- ============================ SELF-HOST ============================ -->
 		<section id="selfhost" class="selfhost">
 			<div class="wrap selfhost-grid">
@@ -431,6 +489,10 @@ const jsonLd = {
 						<li>
 							<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
 							<span><strong>Boring, auditable stack.</strong> Laravel, Vue, Postgres, Reverb, Meilisearch. No build step. Read every line on GitHub.</span>
+						</li>
+						<li>
+							<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+							<span><strong>Hardened before you touch it.</strong> A real content security policy, HSTS on secure responses, framing denied by default, secure session cookies. Defaults, not a checklist you work through.</span>
 						</li>
 						<li>
 							<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
@@ -1290,6 +1352,74 @@ const jsonLd = {
 				font-weight: 600;
 			}
 
+			/* identity & audit — two panels, one claim per line */
+			.trust {
+				background: var(--card-soft);
+				border-bottom: 1px solid var(--line);
+			}
+			.trust-inner {
+				padding-top: 84px;
+				padding-bottom: 84px;
+				display: flex;
+				flex-direction: column;
+				gap: 40px;
+			}
+			.trust-grid {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				gap: 14px;
+			}
+			.trust-card {
+				border: 1px solid var(--line);
+				border-radius: 14px;
+				background: var(--card);
+				padding: 24px 26px 26px;
+				box-shadow: 0 2px 8px rgba(60, 55, 40, 0.05);
+			}
+			.trust-head {
+				display: flex;
+				align-items: center;
+				gap: 9px;
+				padding-bottom: 14px;
+				border-bottom: 1px solid var(--line);
+			}
+			.trust-name {
+				font-size: 15px;
+				font-weight: 650;
+			}
+			.trust-list {
+				list-style: none;
+				padding: 0;
+				margin-top: 16px;
+				display: flex;
+				flex-direction: column;
+				gap: 13px;
+			}
+			.trust-list li {
+				font-size: 13.5px;
+				line-height: 1.55;
+				color: var(--muted);
+			}
+			.trust-list strong {
+				color: var(--ink);
+				font-weight: 600;
+			}
+			.trust-note {
+				margin-top: -12px;
+				font-size: 13px;
+				line-height: 1.6;
+				color: var(--faint);
+			}
+			.trust-note a {
+				color: var(--ink);
+				text-decoration: underline;
+				text-underline-offset: 2px;
+				text-decoration-color: var(--brass-mid);
+			}
+			.trust-note a:hover {
+				text-decoration-color: var(--brass);
+			}
+
 			/* self-host */
 			.selfhost {
 				background: var(--dark);
@@ -1636,6 +1766,16 @@ const jsonLd = {
 				.phone-shot {
 					max-width: 290px;
 					margin: 0 auto;
+				}
+
+				.trust-inner {
+					padding-top: 56px;
+					padding-bottom: 56px;
+					gap: 30px;
+				}
+				.trust-grid {
+					grid-template-columns: 1fr;
+					gap: 12px;
 				}
 
 				.selfhost-grid {
