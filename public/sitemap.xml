@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	One route, one entry — hand-written rather than generated, because
+	@astrojs/sitemap would be a dependency earning a single <url>. Add an entry
+	here when src/pages/ grows a second page.
+
+	<lastmod> is deliberately absent: nothing regenerates this file on deploy, and
+	a date frozen at whenever someone last remembered to touch it is worse than no
+	date at all — crawlers weigh it, and a stale one teaches them to ignore ours.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+	<url>
+		<loc>https://thedeskhq.app/</loc>
+	</url>
+</urlset>

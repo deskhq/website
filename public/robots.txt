@@ -1,0 +1,13 @@
+# The apex is a single public marketing page — all of it is meant to be indexed,
+# by search engines and by SEO auditors alike. The documentation and the demo
+# live on their own origins and carry their own robots.txt.
+#
+# This file has to exist as a real asset: without it Cloudflare Pages answers
+# /robots.txt with index.html at 200, and a crawler handed 37 KB of HTML where a
+# text file belongs treats the site as unreachable. See public/sitemap.xml and
+# src/pages/404.astro, which close the same hole from the other side.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://thedeskhq.app/sitemap.xml
