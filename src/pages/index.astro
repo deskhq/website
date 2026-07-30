@@ -7,6 +7,29 @@
 // page's vocabulary onto those tokens.
 import '../styles/tokens.css';
 
+// The synced shell captures, imported rather than linked out of public/ so the
+// build can re-encode them. They are PNG screenshots of a text-dense UI —
+// several hundred KB each — and WebP at this quality halves them without
+// smearing the type. Every capture keeps its PNG as the <picture> fallback.
+import { getImage } from 'astro:assets';
+import desktopLight from '../assets/shell/desktop-light.png';
+import desktopDark from '../assets/shell/desktop-dark.png';
+import mobileLight from '../assets/shell/mobile-light.png';
+import mobileDark from '../assets/shell/mobile-dark.png';
+
+const shot = async (src) => ({
+	webp: (await getImage({ src, format: 'webp', quality: 78 })).src,
+	png: src.src,
+	width: src.width,
+	height: src.height,
+});
+const shell = {
+	desktopLight: await shot(desktopLight),
+	desktopDark: await shot(desktopDark),
+	mobileLight: await shot(mobileLight),
+	mobileDark: await shot(mobileDark),
+};
+
 const site = 'https://thedeskhq.app';
 const github = 'https://github.com/deskhq/the-desk';
 const docs = 'https://docs.thedeskhq.app/';
@@ -24,10 +47,14 @@ const dokployGuide = 'https://docs.thedeskhq.app/self-hosting/dokploy/';
 // A live instance seeded with the demo workspace; its login page prints the
 // shared credentials, so nothing on the page should promise a signup flow.
 const demo = 'https://demo.thedeskhq.app/';
-const title = 'The Desk — Self-hosted team chat that lives on your own server';
+// Both strings are kept inside the lengths search engines render without
+// truncating: roughly 60 characters for the title, 160 for the description.
+const title = 'Self-hosted team chat on your own server — The Desk';
 const description =
-	'The Desk is a calm, fast, open-source team chat app you host yourself — a self-hosted Slack alternative with channels, threads, reminders, and scheduled messages. One container, your hardware, your data.';
+	'A calm, fast, open-source Slack alternative you host yourself: channels, threads, reminders and scheduled messages. One container, your hardware, your data.';
 const ogImage = `${site}/og-image.png`;
+const fontCss =
+	'https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap';
 
 // Rich-result structured data: a free, self-hostable web application.
 const jsonLd = {
@@ -94,10 +121,16 @@ gtag('config', ${JSON.stringify(gaMeasurementId)});
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 		{gaMeasurementId && <link rel="preconnect" href="https://www.googletagmanager.com" />}
-		<link
-			href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap"
-			rel="stylesheet"
-		/>
+		{/*
+		  Fetched at stylesheet priority but applied out of the critical path:
+		  `media="print"` means the browser does not block the first render on a
+		  round trip to fonts.googleapis.com, and the onload flips it back the
+		  moment it lands. The faces already carry `display=swap`, so the page
+		  paints in the fallback either way — this only stops the wait.
+		*/}
+		<link rel="preload" as="style" href={fontCss} />
+		<link rel="stylesheet" href={fontCss} media="print" onload="this.media='all'" />
+		<noscript><link rel="stylesheet" href={fontCss} /></noscript>
 		{
 			gaMeasurementId && (
 				<Fragment>
@@ -141,485 +174,508 @@ gtag('config', ${JSON.stringify(gaMeasurementId)});
 			</div>
 		</header>
 
-		<!-- ============================ HERO ============================ -->
-		<section class="hero">
-			<div class="wrap hero-grid">
-				<div class="hero-copy">
-					<span class="eyebrow-brass serif">
-						<svg width="14" height="14" viewBox="0 0 40 40" aria-hidden="true">
-							<polygon points="20,18 36,27 20,36 4,27" fill="#7d6023" opacity="0.35"></polygon>
-							<polygon points="20,11 36,20 20,29 4,20" fill="#7d6023" opacity="0.6"></polygon>
-							<polygon points="20,4 36,13 20,22 4,13" fill="#c9a35c"></polygon>
-						</svg>
-						Open source, self-hosted team chat
-					</span>
-					<h1 class="serif hero-title">Team chat that lives on your own server</h1>
-					<p class="hero-lede">
-						The Desk is a calm, fast, self-hosted Slack alternative: channels, threads, reminders,
-						scheduled messages. One container, your hardware, your data. No per-seat pricing, because
-						there's no one to pay.
-					</p>
-					<div class="hero-actions">
-						<a class="btn btn-dark btn-lg" href={installGuide} data-cta="install_guide" data-placement="hero">
-							Deploy in 5 minutes
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
-								><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg
-							>
-						</a>
-						<a class="btn btn-outline btn-lg" href={demo} target="_blank" rel="noopener" data-cta="live_demo" data-placement="hero">Try the live demo</a>
+		<main>
+			<!-- ============================ HERO ============================ -->
+			<section class="hero">
+				<div class="wrap hero-grid">
+					<div class="hero-copy">
+						<span class="eyebrow-brass serif">
+							<svg width="14" height="14" viewBox="0 0 40 40" aria-hidden="true">
+								<polygon points="20,18 36,27 20,36 4,27" fill="#7d6023" opacity="0.35"></polygon>
+								<polygon points="20,11 36,20 20,29 4,20" fill="#7d6023" opacity="0.6"></polygon>
+								<polygon points="20,4 36,13 20,22 4,13" fill="#c9a35c"></polygon>
+							</svg>
+							Open source, self-hosted team chat
+						</span>
+						<h1 class="serif hero-title">Team chat that lives on your own server</h1>
+						<p class="hero-lede">
+							The Desk is a calm, fast, self-hosted Slack alternative: channels, threads, reminders,
+							scheduled messages. One container, your hardware, your data. No per-seat pricing, because
+							there's no one to pay.
+						</p>
+						<div class="hero-actions">
+							<a class="btn btn-dark btn-lg" href={installGuide} data-cta="install_guide" data-placement="hero">
+								Deploy in 5 minutes
+								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+									><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg
+								>
+							</a>
+							<a class="btn btn-outline btn-lg" href={demo} target="_blank" rel="noopener" data-cta="live_demo" data-placement="hero">Try the live demo</a>
+						</div>
+						<p class="hero-demo-note">
+							No signup, no install — the demo's login page shows the shared credentials.
+						</p>
+						<div class="hero-install">
+							<span class="mono-chip">docker compose pull &amp;&amp; docker compose up -d</span>
+							<span>and it's installed. Prebuilt image, no build step.</span>
+						</div>
 					</div>
-					<p class="hero-demo-note">
-						No signup, no install — the demo's login page shows the shared credentials.
-					</p>
-					<div class="hero-install">
-						<span class="mono-chip">docker compose pull &amp;&amp; docker compose up -d</span>
-						<span>and it's installed. Prebuilt image, no build step.</span>
-					</div>
-				</div>
 
-				<!--
-				  The real shell, synced from deskhq/the-desk's `bin/capture-shell`
-				  output. Intrinsic width/height are the captures' true pixel sizes so
-				  the hero reserves its box before the image lands.
-				-->
-				<div class="preview">
-					<picture>
-						<source srcset="/shell/mobile-light.png" media="(max-width: 767px)" width="780" height="1688" />
-						<img
-							src="/shell/desktop-light.png"
-							alt="The Desk's workspace: an icon rail, the channel dock, and the #product-launch channel with a pinned message, reactions and a thread"
-							width="2880"
-							height="1800"
-							fetchpriority="high"
-							decoding="async"
-						/>
-					</picture>
+					<!--
+					  The real shell, synced from deskhq/the-desk's `bin/capture-shell`
+					  output. Intrinsic width/height are the captures' true pixel sizes so
+					  the hero reserves its box before the image lands. WebP first at every
+					  breakpoint, with the PNG behind it for anything that cannot take it.
+					-->
+					<div class="preview">
+						<picture>
+							<source srcset={shell.mobileLight.webp} type="image/webp" media="(max-width: 767px)" width={shell.mobileLight.width} height={shell.mobileLight.height} />
+							<source srcset={shell.mobileLight.png} media="(max-width: 767px)" width={shell.mobileLight.width} height={shell.mobileLight.height} />
+							<source srcset={shell.desktopLight.webp} type="image/webp" width={shell.desktopLight.width} height={shell.desktopLight.height} />
+							<img
+								src={shell.desktopLight.png}
+								alt="The Desk's workspace: an icon rail, the channel dock, and the #product-launch channel with a pinned message, reactions and a thread"
+								width={shell.desktopLight.width}
+								height={shell.desktopLight.height}
+								fetchpriority="high"
+								decoding="async"
+							/>
+						</picture>
+					</div>
 				</div>
-			</div>
-		</section>
+			</section>
 
-		<!-- ============================ SHOWCASE ============================ -->
-		<section class="showcase">
-			<div class="wrap">
-				<div class="section-head showcase-head">
-					<span class="eyebrow eyebrow--gold">See it in action</span>
-					<h2 class="serif section-title showcase-title">Your whole workspace, quietly in one&nbsp;place</h2>
-					<p class="section-lede">
-						Channels, threads, reactions, and direct messages: the real app, not a mockup. Light and
-						dark both ship, on desktop and on mobile.
-					</p>
+			<!-- ============================ SHOWCASE ============================ -->
+			<section class="showcase">
+				<div class="wrap">
+					<div class="section-head showcase-head">
+						<span class="eyebrow eyebrow--gold">See it in action</span>
+						<h2 class="serif section-title showcase-title">Your whole workspace, quietly in one&nbsp;place</h2>
+						<p class="section-lede">
+							Channels, threads, reactions, and direct messages: the real app, not a mockup. Light and
+							dark both ship, on desktop and on mobile.
+						</p>
+					</div>
+					<!--
+					  Same synced captures as the hero, uncropped, and following the
+					  reader's theme: dark preference gets the dark shot.
+					-->
+					<div class="showcase-frame">
+						<picture>
+							<source
+								srcset={shell.mobileDark.webp}
+								type="image/webp"
+								media="(max-width: 767px) and (prefers-color-scheme: dark)"
+								width={shell.mobileDark.width}
+								height={shell.mobileDark.height}
+							/>
+							<source
+								srcset={shell.mobileDark.png}
+								media="(max-width: 767px) and (prefers-color-scheme: dark)"
+								width={shell.mobileDark.width}
+								height={shell.mobileDark.height}
+							/>
+							<source srcset={shell.desktopDark.webp} type="image/webp" media="(prefers-color-scheme: dark)" width={shell.desktopDark.width} height={shell.desktopDark.height} />
+							<source srcset={shell.desktopDark.png} media="(prefers-color-scheme: dark)" width={shell.desktopDark.width} height={shell.desktopDark.height} />
+							<source srcset={shell.mobileLight.webp} type="image/webp" media="(max-width: 767px)" width={shell.mobileLight.width} height={shell.mobileLight.height} />
+							<source srcset={shell.mobileLight.png} media="(max-width: 767px)" width={shell.mobileLight.width} height={shell.mobileLight.height} />
+							<source srcset={shell.desktopLight.webp} type="image/webp" width={shell.desktopLight.width} height={shell.desktopLight.height} />
+							<img
+								src={shell.desktopLight.png}
+								alt="The Desk workspace: the icon rail and channel dock beside the #product-launch channel, with reactions, a pinned message and a thread"
+								width={shell.desktopLight.width}
+								height={shell.desktopLight.height}
+								loading="lazy"
+								decoding="async"
+							/>
+						</picture>
+					</div>
 				</div>
-				<!--
-				  Same synced captures as the hero, uncropped, and following the
-				  reader's theme: dark preference gets the dark shot.
-				-->
-				<div class="showcase-frame">
-					<picture>
-						<source
-							srcset="/shell/mobile-dark.png"
-							media="(max-width: 767px) and (prefers-color-scheme: dark)"
-							width="780"
-							height="1688"
-						/>
-						<source srcset="/shell/desktop-dark.png" media="(prefers-color-scheme: dark)" width="2880" height="1800" />
-						<source srcset="/shell/mobile-light.png" media="(max-width: 767px)" width="780" height="1688" />
-						<img
-							src="/shell/desktop-light.png"
-							alt="The Desk workspace: the icon rail and channel dock beside the #product-launch channel, with reactions, a pinned message and a thread"
-							width="2880"
-							height="1800"
-							loading="lazy"
-							decoding="async"
-						/>
-					</picture>
-				</div>
-			</div>
-		</section>
+			</section>
 
-		<!-- ============================ POWERED BY ============================ -->
-		<section class="powered">
-			<div class="wrap powered-grid">
-				<div class="powered-intro">
-					<span class="eyebrow eyebrow--brass">Powered by</span>
-					<h2 class="serif powered-title">A boring stack you already know how to run</h2>
-					<p class="powered-lede">One compose file, a handful of containers. No Kubernetes, no exotic dependencies.</p>
+			<!-- ============================ POWERED BY ============================ -->
+			<section class="powered">
+				<div class="wrap powered-grid">
+					<div class="powered-intro">
+						<span class="eyebrow eyebrow--brass">Powered by</span>
+						<h2 class="serif powered-title">A boring stack you already know how to run</h2>
+						<p class="powered-lede">One compose file, a handful of containers. No Kubernetes, no exotic dependencies.</p>
+					</div>
+					<!--
+					  The marks are Simple Icons (CC0), vendored into public/tech at the
+					  cream fill this section needs rather than fetched from their CDN:
+					  seven third-party requests, each served with a cache lifetime we do
+					  not control, for seven files totalling under 10 KB.
+					-->
+					<div class="stack-grid">
+						<div class="stack-card">
+							<img src="/tech/laravel.svg" alt="Laravel" width="30" height="30" />
+							<div class="stack-text"><span class="stack-name">Laravel 13</span><span class="stack-desc">Application framework, queues &amp; scheduler</span></div>
+						</div>
+						<div class="stack-card">
+							<img src="/tech/vuedotjs.svg" alt="Vue.js" width="30" height="30" />
+							<div class="stack-text"><span class="stack-name">Vue 3</span><span class="stack-desc">Frontend, served through Inertia</span></div>
+						</div>
+						<div class="stack-card">
+							<img src="/tech/inertia.svg" alt="Inertia" width="30" height="30" />
+							<div class="stack-text"><span class="stack-name">Inertia</span><span class="stack-desc">Server-driven SPA, no separate API</span></div>
+						</div>
+						<div class="stack-card">
+							<img src="/tech/postgresql.svg" alt="PostgreSQL" width="30" height="30" />
+							<div class="stack-text"><span class="stack-name">PostgreSQL</span><span class="stack-desc">Database, cache, sessions &amp; queue</span></div>
+						</div>
+						<div class="stack-card">
+							<img src="/tech/meilisearch.svg" alt="Meilisearch" width="30" height="30" />
+							<div class="stack-text"><span class="stack-name">Meilisearch</span><span class="stack-desc">Instant full-text message search</span></div>
+						</div>
+						<div class="stack-card">
+							<img src="/tech/redis.svg" alt="Redis" width="30" height="30" />
+							<div class="stack-text"><span class="stack-name">Redis</span><span class="stack-desc">Cache &amp; realtime presence</span></div>
+						</div>
+						<div class="stack-card stack-card--wide">
+							<img src="/tech/docker.svg" alt="Docker" width="38" height="38" />
+							<div class="stack-text"><span class="stack-name">Docker</span><span class="stack-desc">The whole stack in one compose file: FrankenPHP app image, Reverb websockets, queue worker &amp; scheduler</span></div>
+						</div>
+					</div>
 				</div>
-				<div class="stack-grid">
-					<div class="stack-card">
-						<img src="https://cdn.simpleicons.org/laravel/f3efe4" alt="Laravel" width="30" height="30" />
-						<div class="stack-text"><span class="stack-name">Laravel 13</span><span class="stack-desc">Application framework, queues &amp; scheduler</span></div>
-					</div>
-					<div class="stack-card">
-						<img src="https://cdn.simpleicons.org/vuedotjs/f3efe4" alt="Vue.js" width="30" height="30" />
-						<div class="stack-text"><span class="stack-name">Vue 3</span><span class="stack-desc">Frontend, served through Inertia</span></div>
-					</div>
-					<div class="stack-card">
-						<img src="https://cdn.simpleicons.org/inertia/f3efe4" alt="Inertia" width="30" height="30" />
-						<div class="stack-text"><span class="stack-name">Inertia</span><span class="stack-desc">Server-driven SPA, no separate API</span></div>
-					</div>
-					<div class="stack-card">
-						<img src="https://cdn.simpleicons.org/postgresql/f3efe4" alt="PostgreSQL" width="30" height="30" />
-						<div class="stack-text"><span class="stack-name">PostgreSQL</span><span class="stack-desc">Database, cache, sessions &amp; queue</span></div>
-					</div>
-					<div class="stack-card">
-						<img src="https://cdn.simpleicons.org/meilisearch/f3efe4" alt="Meilisearch" width="30" height="30" />
-						<div class="stack-text"><span class="stack-name">Meilisearch</span><span class="stack-desc">Instant full-text message search</span></div>
-					</div>
-					<div class="stack-card">
-						<img src="https://cdn.simpleicons.org/redis/f3efe4" alt="Redis" width="30" height="30" />
-						<div class="stack-text"><span class="stack-name">Redis</span><span class="stack-desc">Cache &amp; realtime presence</span></div>
-					</div>
-					<div class="stack-card stack-card--wide">
-						<img src="https://cdn.simpleicons.org/docker/f3efe4" alt="Docker" width="38" height="38" />
-						<div class="stack-text"><span class="stack-name">Docker</span><span class="stack-desc">The whole stack in one compose file: FrankenPHP app image, Reverb websockets, queue worker &amp; scheduler</span></div>
-					</div>
-				</div>
-			</div>
-		</section>
+			</section>
 
-		<!-- ============================ FEATURES ============================ -->
-		<section id="features" class="features">
-			<div class="wrap">
-				<div class="section-head">
-					<span class="eyebrow eyebrow--gold">Everything a team needs</span>
-					<h2 class="serif section-title">Built in, not add-ons</h2>
-					<p class="section-lede">
-						Channels, threads, and DMs are table stakes. The Desk also covers the workflow features
-						teams actually miss when they leave the big platforms.
-					</p>
-				</div>
-				<!--
-				  Card order is deliberate: search leads, and the three cards whose
-				  demos need the room — search, polls and the API — span two
-				  columns, which also lands the twelve cards on five full rows
-				  instead of leaving an orphan. Twelve divides evenly at two and
-				  one column, where the spans collapse; see .feature-card--wide.
-				-->
-				<div class="feature-grid">
-					<div class="feature-card feature-card--wide">
-						<div class="feature-demo demo-col">
-							<div class="demo-row">
-								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
-								<span class="demo-text">roadmap <span class="faint">— 23 messages in 4 channels</span></span>
+			<!-- ============================ FEATURES ============================ -->
+			<section id="features" class="features">
+				<div class="wrap">
+					<div class="section-head">
+						<span class="eyebrow eyebrow--gold">Everything a team needs</span>
+						<h2 class="serif section-title">Built in, not add-ons</h2>
+						<p class="section-lede">
+							Channels, threads, and DMs are table stakes. The Desk also covers the workflow features
+							teams actually miss when they leave the big platforms.
+						</p>
+					</div>
+					<!--
+					  Card order is deliberate: search leads, and the three cards whose
+					  demos need the room — search, polls and the API — span two
+					  columns, which also lands the twelve cards on five full rows
+					  instead of leaving an orphan. Twelve divides evenly at two and
+					  one column, where the spans collapse; see .feature-card--wide.
+					-->
+					<div class="feature-grid">
+						<div class="feature-card feature-card--wide">
+							<div class="feature-demo demo-col">
+								<div class="demo-row">
+									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+									<span class="demo-text">roadmap <span class="faint">— 23 messages in 4 channels</span></span>
+								</div>
+								<div class="demo-row demo-row--wrap">
+									<span class="reaction reaction--on">from:maya</span>
+									<span class="reaction">has:file</span>
+									<span class="reaction">#product-launch</span>
+								</div>
 							</div>
-							<div class="demo-row demo-row--wrap">
-								<span class="reaction reaction--on">from:maya</span>
-								<span class="reaction">has:file</span>
-								<span class="reaction">#product-launch</span>
+							<div class="feature-text"><span class="feature-name">Search that filters</span><span class="feature-desc">Full-text search over every channel, thread and DM you can see, then narrow it by author, channel, date, or <strong>has:file</strong> to find the attachment you half-remember. Pinned in the dock, instant at any history size.</span></div>
+						</div>
+						<div class="feature-card">
+							<div class="feature-demo demo-col">
+								<span class="demo-text">Reminder: retro moved to Thursday.</span>
+								<span class="scheduled-pill scheduled-pill--soft">
+									<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+									Sends Mon 9:00 AM
+								</span>
 							</div>
+							<div class="feature-text"><span class="feature-name">Scheduled messages</span><span class="feature-desc">Write now, send when it's kind to. Edit or cancel anything still in the queue.</span></div>
 						</div>
-						<div class="feature-text"><span class="feature-name">Search that filters</span><span class="feature-desc">Full-text search over every channel, thread and DM you can see, then narrow it by author, channel, date, or <strong>has:file</strong> to find the attachment you half-remember. Pinned in the dock, instant at any history size.</span></div>
-					</div>
-					<div class="feature-card">
-						<div class="feature-demo demo-col">
-							<span class="demo-text">Reminder: retro moved to Thursday.</span>
-							<span class="scheduled-pill scheduled-pill--soft">
-								<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-								Sends Mon 9:00 AM
-							</span>
+						<div class="feature-card">
+							<div class="feature-demo demo-row">
+								<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+								<span class="demo-text">Remind me about this <strong>tomorrow at 9 AM</strong></span>
+							</div>
+							<div class="feature-text"><span class="feature-name">Message reminders</span><span class="feature-desc">Snooze any message and it resurfaces exactly when you asked. Nothing slips.</span></div>
 						</div>
-						<div class="feature-text"><span class="feature-name">Scheduled messages</span><span class="feature-desc">Write now, send when it's kind to. Edit or cancel anything still in the queue.</span></div>
-					</div>
-					<div class="feature-card">
-						<div class="feature-demo demo-row">
-							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
-							<span class="demo-text">Remind me about this <strong>tomorrow at 9 AM</strong></span>
+						<div class="feature-card">
+							<div class="feature-demo demo-col">
+								<span class="demo-text">Starting a thread for icon feedback.</span>
+								<span class="thread-link">
+									<span class="stack"><span class="stack-a stack-a--sm"></span><span class="stack-b stack-b--sm"></span></span>
+									5 replies
+								</span>
+							</div>
+							<div class="feature-text"><span class="feature-name">Threads &amp; group DMs</span><span class="feature-desc">Side conversations stay at the side. Channels stay readable.</span></div>
 						</div>
-						<div class="feature-text"><span class="feature-name">Message reminders</span><span class="feature-desc">Snooze any message and it resurfaces exactly when you asked. Nothing slips.</span></div>
-					</div>
-					<div class="feature-card">
-						<div class="feature-demo demo-col">
-							<span class="demo-text">Starting a thread for icon feedback.</span>
-							<span class="thread-link">
+						<div class="feature-card">
+							<div class="feature-demo demo-row">
+								<span class="reaction reaction--on">@design</span>
 								<span class="stack"><span class="stack-a stack-a--sm"></span><span class="stack-b stack-b--sm"></span></span>
-								5 replies
-							</span>
+								<span class="demo-text">notifies all 6</span>
+							</div>
+							<div class="feature-text"><span class="feature-name">User groups &amp; group mentions</span><span class="feature-desc">Mention <strong>@design</strong> or <strong>@oncall</strong> and everyone in the group hears it. Membership lives in settings, not in your head.</span></div>
 						</div>
-						<div class="feature-text"><span class="feature-name">Threads &amp; group DMs</span><span class="feature-desc">Side conversations stay at the side. Channels stay readable.</span></div>
-					</div>
-					<div class="feature-card">
-						<div class="feature-demo demo-row">
-							<span class="reaction reaction--on">@design</span>
-							<span class="stack"><span class="stack-a stack-a--sm"></span><span class="stack-b stack-b--sm"></span></span>
-							<span class="demo-text">notifies all 6</span>
+						<div class="feature-card">
+							<div class="feature-demo demo-row">
+								<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0"></path><path d="M12 18v4"></path></svg>
+								<!-- played portion of the waveform is the first five bars; the
+								     heights repeat every six, so the pattern needs six rules -->
+								<span class="wave" aria-hidden="true"
+									><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span
+								>
+								<span class="demo-text faint">0:14</span>
+							</div>
+							<div class="feature-text"><span class="feature-name">Voice messages</span><span class="feature-desc">Record straight in the composer when typing it out would take five minutes. Plays back inline, waveform and all.</span></div>
 						</div>
-						<div class="feature-text"><span class="feature-name">User groups &amp; group mentions</span><span class="feature-desc">Mention <strong>@design</strong> or <strong>@oncall</strong> and everyone in the group hears it. Membership lives in settings, not in your head.</span></div>
-					</div>
-					<div class="feature-card">
-						<div class="feature-demo demo-row">
-							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0"></path><path d="M12 18v4"></path></svg>
-							<!-- played portion of the waveform is the first five bars; the
-							     heights repeat every six, so the pattern needs six rules -->
-							<span class="wave" aria-hidden="true"
-								><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span
-							>
-							<span class="demo-text faint">0:14</span>
-						</div>
-						<div class="feature-text"><span class="feature-name">Voice messages</span><span class="feature-desc">Record straight in the composer when typing it out would take five minutes. Plays back inline, waveform and all.</span></div>
-					</div>
-					<div class="feature-card feature-card--wide">
-						<div class="feature-demo demo-col">
-							<span class="demo-text">Retro on Thursday or Friday?</span>
-							<div class="poll">
-								<div class="poll-row">
-									<span class="poll-label">Thursday</span>
-									<span class="poll-bar"><span class="poll-fill poll-fill--lead"></span></span>
-									<span class="poll-votes">7</span>
-								</div>
-								<div class="poll-row">
-									<span class="poll-label">Friday</span>
-									<span class="poll-bar"><span class="poll-fill"></span></span>
-									<span class="poll-votes">4</span>
+						<div class="feature-card feature-card--wide">
+							<div class="feature-demo demo-col">
+								<span class="demo-text">Retro on Thursday or Friday?</span>
+								<div class="poll">
+									<div class="poll-row">
+										<span class="poll-label">Thursday</span>
+										<span class="poll-bar"><span class="poll-fill poll-fill--lead"></span></span>
+										<span class="poll-votes">7</span>
+									</div>
+									<div class="poll-row">
+										<span class="poll-label">Friday</span>
+										<span class="poll-bar"><span class="poll-fill"></span></span>
+										<span class="poll-votes">4</span>
+									</div>
 								</div>
 							</div>
+							<div class="feature-text"><span class="feature-name">Polls</span><span class="feature-desc">Ask the channel and count the answers in place, instead of eleven replies and a tally in someone's notes. Polls work in threads, and they show up in unread counts like anything else.</span></div>
 						</div>
-						<div class="feature-text"><span class="feature-name">Polls</span><span class="feature-desc">Ask the channel and count the answers in place, instead of eleven replies and a tally in someone's notes. Polls work in threads, and they show up in unread counts like anything else.</span></div>
-					</div>
-					<div class="feature-card">
-						<div class="feature-demo demo-row">
-							<span class="reaction reaction--on">🚀 7</span>
-							<span class="reaction">🥳 3</span>
-							<span class="reaction reaction--add">+</span>
-						</div>
-						<div class="feature-text"><span class="feature-name">Reactions &amp; custom emoji</span><span class="feature-desc">Upload your team's own emoji. Inside jokes are a feature, not bloat.</span></div>
-					</div>
-					<div class="feature-card">
-						<div class="feature-demo demo-row">
-							<span class="dot dot--brass"></span>
-							<span class="demo-text">Reconnecting… <span class="faint">your drafts are safe</span></span>
-						</div>
-						<div class="feature-text"><span class="feature-name">Connection resilience</span><span class="feature-desc">Flaky wifi, laptop lids, VPN drops: The Desk reconnects and catches up quietly.</span></div>
-					</div>
-					<div class="feature-card">
-						<div class="feature-demo demo-row">
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 3v18h18"></path><path d="M7 14l4-4 3 3 5-6"></path></svg>
-							<span class="demo-text">Analytics, audit log, roles &amp; invitations</span>
-						</div>
-						<div class="feature-text"><span class="feature-name">Roles, analytics &amp; moderation</span><span class="feature-desc">Team analytics, a moderation audit log, roles and invitations, and session management. Identity and audit get their own section below.</span></div>
-					</div>
-					<div class="feature-card feature-card--wide">
-						<div class="feature-demo demo-col">
-							<span class="mono-chip mono-chip--wrap">curl -O https://docs.thedeskhq.app/openapi.yaml</span>
-							<div class="demo-row demo-row--wrap">
-								<span class="reaction reaction--on">REST v1</span>
-								<span class="reaction">OpenAPI 3.1</span>
-								<span class="reaction">scoped bot tokens</span>
+						<div class="feature-card">
+							<div class="feature-demo demo-row">
+								<span class="reaction reaction--on">🚀 7</span>
+								<span class="reaction">🥳 3</span>
+								<span class="reaction reaction--add">+</span>
 							</div>
+							<div class="feature-text"><span class="feature-name">Reactions &amp; custom emoji</span><span class="feature-desc">Upload your team's own emoji. Inside jokes are a feature, not bloat.</span></div>
 						</div>
-						<div class="feature-text"
-							><span class="feature-name">A REST API, not a scraping project</span
-							><span class="feature-desc"
-								>A versioned public API under <strong>/api/v1</strong>, described by an OpenAPI 3.1 document that a test keeps in lockstep with the routes — so the spec cannot quietly drift from the running code. Browse the <a href={apiReference} target="_blank" rel="noopener" data-cta="docs" data-placement="features">API reference</a>, or point a generator at the <a href={openapiSpec} target="_blank" rel="noopener" data-cta="docs" data-placement="features">spec</a> and get a typed client in your language.</span
-							></div
-						>
-					</div>
-					<div class="feature-card">
-						<div class="feature-demo demo-row">
-							<span class="reaction reaction--on">bot</span>
-							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-							<span class="demo-text">signed POST to your endpoint</span>
+						<div class="feature-card">
+							<div class="feature-demo demo-row">
+								<span class="dot dot--brass"></span>
+								<span class="demo-text">Reconnecting… <span class="faint">your drafts are safe</span></span>
+							</div>
+							<div class="feature-text"><span class="feature-name">Connection resilience</span><span class="feature-desc">Flaky wifi, laptop lids, VPN drops: The Desk reconnects and catches up quietly.</span></div>
 						</div>
-						<div class="feature-text"><span class="feature-name">Bots &amp; webhooks</span><span class="feature-desc">Give a bot scoped tokens and subscribe it to events, per channel if you like: deliveries are signed, retried, and disabled when your endpoint stops answering. Incoming webhooks go the other way — one secret URL posts into a channel.</span></div>
+						<div class="feature-card">
+							<div class="feature-demo demo-row">
+								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 3v18h18"></path><path d="M7 14l4-4 3 3 5-6"></path></svg>
+								<span class="demo-text">Analytics, audit log, roles &amp; invitations</span>
+							</div>
+							<div class="feature-text"><span class="feature-name">Roles, analytics &amp; moderation</span><span class="feature-desc">Team analytics, a moderation audit log, roles and invitations, and session management. Identity and audit get their own section below.</span></div>
+						</div>
+						<div class="feature-card feature-card--wide">
+							<div class="feature-demo demo-col">
+								<span class="mono-chip mono-chip--wrap">curl -O https://docs.thedeskhq.app/openapi.yaml</span>
+								<div class="demo-row demo-row--wrap">
+									<span class="reaction reaction--on">REST v1</span>
+									<span class="reaction">OpenAPI 3.1</span>
+									<span class="reaction">scoped bot tokens</span>
+								</div>
+							</div>
+							<div class="feature-text"
+								><span class="feature-name">A REST API, not a scraping project</span
+								><span class="feature-desc"
+									>A versioned public API under <strong>/api/v1</strong>, described by an OpenAPI 3.1 document that a test keeps in lockstep with the routes — so the spec cannot quietly drift from the running code. Browse the <a href={apiReference} target="_blank" rel="noopener" data-cta="docs" data-placement="features">API reference</a>, or point a generator at the <a href={openapiSpec} target="_blank" rel="noopener" data-cta="docs" data-placement="features">spec</a> and get a typed client in your language.</span
+								></div
+							>
+						</div>
+						<div class="feature-card">
+							<div class="feature-demo demo-row">
+								<span class="reaction reaction--on">bot</span>
+								<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+								<span class="demo-text">signed POST to your endpoint</span>
+							</div>
+							<div class="feature-text"><span class="feature-name">Bots &amp; webhooks</span><span class="feature-desc">Give a bot scoped tokens and subscribe it to events, per channel if you like: deliveries are signed, retried, and disabled when your endpoint stops answering. Incoming webhooks go the other way — one secret URL posts into a channel.</span></div>
+						</div>
 					</div>
 				</div>
-			</div>
-		</section>
+			</section>
 
-		<!-- ============================ ON YOUR PHONE ============================ -->
-		<!--
-		  Class prefix is `phone-`, not `mobile-`: `.mobile-menu` and friends
-		  below are the nav drawer, and the two are not related.
-		-->
-		<section id="mobile" class="phone">
-			<div class="wrap phone-grid">
-				<!--
-				  The same synced capture the hero serves below 768px, here at
-				  full height — the section claims there is a real mobile design,
-				  so it should show one.
-				-->
-				<div class="phone-shot">
-					<picture>
-						<source srcset="/shell/mobile-dark.png" media="(prefers-color-scheme: dark)" width="780" height="1688" />
-						<img
-							src="/shell/mobile-light.png"
-							alt="The Desk on a phone: the #product-launch channel with a pinned message, an attachment, reactions, a thread and the message composer"
-							width="780"
-							height="1688"
-							loading="lazy"
-							decoding="async"
-						/>
-					</picture>
-				</div>
-				<div class="phone-copy">
-					<span class="eyebrow eyebrow--gold">On your phone</span>
-					<h2 class="serif section-title phone-title">Install it on your phone, then tell it when to be&nbsp;quiet</h2>
-					<p class="section-lede">
-						The same server you already run, on the home screen. No app store, no second product, no
-						third-party notification service in the middle.
-					</p>
-					<ul class="phone-list">
-						<li>
-							<svg viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2.5"></rect><path d="M12 7v7"></path><path d="m9 11 3 3 3-3"></path></svg>
-							<span
-								><strong>Add to home screen.</strong> An installable app on iOS, Android and desktop, with web push so messages arrive when the tab is closed. Fresh installs generate their own push keys, so it works without extra setup.</span
-							>
-						</li>
-						<li>
-							<svg viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2.5"></rect><path d="M5 15h14"></path><path d="M10 18.5h4"></path></svg>
-							<span
-								><strong>Designed for the phone, not shrunk to fit.</strong> Dialogs come up as bottom sheets, a long press opens message actions, and threads and the quick switcher go full screen.</span
-							>
-						</li>
-						<li>
-							<svg viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
-							<span
-								><strong>Quiet hours.</strong> Pause notifications on a daily schedule, or snooze them for the rest of today. Calm is a setting, not a hope.</span
-							>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</section>
-
-		<!-- ============================ IDENTITY & AUDIT ============================ -->
-		<!--
-		  Every claim in here is a documented setting — the SSO, LDAP and SCIM
-		  blocks in the configuration guide, and the passkey toggle in the
-		  feature-toggle reference. Do not add a claim the docs do not cover:
-		  the footnote links both pages, so a reader can check.
-		-->
-		<section id="security" class="trust">
-			<div class="wrap trust-inner">
-				<div class="section-head">
-					<span class="eyebrow eyebrow--gold">Identity, access &amp; audit</span>
-					<h2 class="serif section-title">The parts your IT review asks about</h2>
-					<p class="section-lede">
-						Self-hosting is the easy half of the approval. The rest is whether it plugs into the
-						directory you already run and leaves a trail afterwards. It does, and both are settings,
-						not a paid tier.
-					</p>
-				</div>
-				<div class="trust-grid">
-					<div class="trust-card">
-						<div class="trust-head">
-							<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 5.5v6c0 4.6 3.2 8.7 8 10.5 4.8-1.8 8-5.9 8-10.5v-6z"></path><path d="m9 12 2 2 4-4"></path></svg>
-							<span class="trust-name">Identity</span>
-						</div>
-						<ul class="trust-list">
-							<li><strong>Single sign-on</strong> over OpenID Connect, with an SSO-only mode when local passwords should stop being an option.</li>
-							<li><strong>LDAP and Active Directory</strong> sign-in against the directory you already run.</li>
-							<li><strong>SCIM 2.0 provisioning</strong>, so an account closed in the directory closes here too.</li>
-							<!-- PASSKEYS_ENABLED and TWO_FACTOR_AUTH_ENABLED both default to
-							     false upstream, so this says "switch on", not "ships on" -->
-							<li><strong>Passkeys and two-factor</strong> — WebAuthn sign-in and TOTP, each one flag to switch on, with a prompt to add a passkey after registering.</li>
-						</ul>
+			<!-- ============================ ON YOUR PHONE ============================ -->
+			<!--
+			  Class prefix is `phone-`, not `mobile-`: `.mobile-menu` and friends
+			  below are the nav drawer, and the two are not related.
+			-->
+			<section id="mobile" class="phone">
+				<div class="wrap phone-grid">
+					<!--
+					  The same synced capture the hero serves below 768px, here at
+					  full height — the section claims there is a real mobile design,
+					  so it should show one.
+					-->
+					<div class="phone-shot">
+						<picture>
+							<source srcset={shell.mobileDark.webp} type="image/webp" media="(prefers-color-scheme: dark)" width={shell.mobileDark.width} height={shell.mobileDark.height} />
+							<source srcset={shell.mobileDark.png} media="(prefers-color-scheme: dark)" width={shell.mobileDark.width} height={shell.mobileDark.height} />
+							<source srcset={shell.mobileLight.webp} type="image/webp" width={shell.mobileLight.width} height={shell.mobileLight.height} />
+							<img
+								src={shell.mobileLight.png}
+								alt="The Desk on a phone: the #product-launch channel with a pinned message, an attachment, reactions, a thread and the message composer"
+								width={shell.mobileLight.width}
+								height={shell.mobileLight.height}
+								loading="lazy"
+								decoding="async"
+							/>
+						</picture>
 					</div>
-					<div class="trust-card">
-						<div class="trust-head">
-							<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"></path><path d="M14 2v5h5"></path><path d="M9 13h6"></path><path d="M9 17h4"></path></svg>
-							<span class="trust-name">Accountability</span>
-						</div>
-						<ul class="trust-list">
-							<li><strong>A security event log</strong> — sign-ins, changes to access — pruned on a retention schedule rather than kept forever.</li>
-							<li><strong>Audit exports</strong> for when someone needs the record in a file, not on a screen.</li>
-							<li><strong>Per-user data export</strong>, generated on request and purged when it expires.</li>
-							<li><strong>Sessions and roles</strong> you can actually see and revoke, alongside the moderation audit log.</li>
+					<div class="phone-copy">
+						<span class="eyebrow eyebrow--gold">On your phone</span>
+						<h2 class="serif section-title phone-title">Install it on your phone, then tell it when to be&nbsp;quiet</h2>
+						<p class="section-lede">
+							The same server you already run, on the home screen. No app store, no second product, no
+							third-party notification service in the middle.
+						</p>
+						<ul class="phone-list">
+							<li>
+								<svg viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2.5"></rect><path d="M12 7v7"></path><path d="m9 11 3 3 3-3"></path></svg>
+								<span
+									><strong>Add to home screen.</strong> An installable app on iOS, Android and desktop, with web push so messages arrive when the tab is closed. Fresh installs generate their own push keys, so it works without extra setup.</span
+								>
+							</li>
+							<li>
+								<svg viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2.5"></rect><path d="M5 15h14"></path><path d="M10 18.5h4"></path></svg>
+								<span
+									><strong>Designed for the phone, not shrunk to fit.</strong> Dialogs come up as bottom sheets, a long press opens message actions, and threads and the quick switcher go full screen.</span
+								>
+							</li>
+							<li>
+								<svg viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+								<span
+									><strong>Quiet hours.</strong> Pause notifications on a daily schedule, or snooze them for the rest of today. Calm is a setting, not a hope.</span
+								>
+							</li>
 						</ul>
 					</div>
 				</div>
-				<!-- links stay on the text's own line: Astro trims the whitespace
-				     between a line break and an element, which eats the space -->
-				<p class="trust-note">
-					None of this is a plan you upgrade to. It's the <a href={configGuide} target="_blank" rel="noopener" data-cta="docs" data-placement="selfhost">configuration guide</a> and the <a href={featureToggles} target="_blank" rel="noopener" data-cta="docs" data-placement="selfhost">feature toggles</a> — read them before you believe this page.
-				</p>
-			</div>
-		</section>
+			</section>
 
-		<!-- ============================ SELF-HOST ============================ -->
-		<section id="selfhost" class="selfhost">
-			<div class="wrap selfhost-grid">
-				<div class="selfhost-copy">
-					<span class="eyebrow eyebrow--brass">Self-hosted, for real</span>
-					<h2 class="serif selfhost-title">Your messages never leave your building</h2>
-					<p class="selfhost-lede">
-						No SaaS middleman, no data-retention lawyering, no surprise pricing changes. The Desk ships
-						as one compose file with a prebuilt image. Run it on a VPS, a NAS in the closet, or your
-						company's rack.
+			<!-- ============================ IDENTITY & AUDIT ============================ -->
+			<!--
+			  Every claim in here is a documented setting — the SSO, LDAP and SCIM
+			  blocks in the configuration guide, and the passkey toggle in the
+			  feature-toggle reference. Do not add a claim the docs do not cover:
+			  the footnote links both pages, so a reader can check.
+			-->
+			<section id="security" class="trust">
+				<div class="wrap trust-inner">
+					<div class="section-head">
+						<span class="eyebrow eyebrow--gold">Identity, access &amp; audit</span>
+						<h2 class="serif section-title">The parts your IT review asks about</h2>
+						<p class="section-lede">
+							Self-hosting is the easy half of the approval. The rest is whether it plugs into the
+							directory you already run and leaves a trail afterwards. It does, and both are settings,
+							not a paid tier.
+						</p>
+					</div>
+					<div class="trust-grid">
+						<div class="trust-card">
+							<div class="trust-head">
+								<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 5.5v6c0 4.6 3.2 8.7 8 10.5 4.8-1.8 8-5.9 8-10.5v-6z"></path><path d="m9 12 2 2 4-4"></path></svg>
+								<span class="trust-name">Identity</span>
+							</div>
+							<ul class="trust-list">
+								<li><strong>Single sign-on</strong> over OpenID Connect, with an SSO-only mode when local passwords should stop being an option.</li>
+								<li><strong>LDAP and Active Directory</strong> sign-in against the directory you already run.</li>
+								<li><strong>SCIM 2.0 provisioning</strong>, so an account closed in the directory closes here too.</li>
+								<!-- PASSKEYS_ENABLED and TWO_FACTOR_AUTH_ENABLED both default to
+								     false upstream, so this says "switch on", not "ships on" -->
+								<li><strong>Passkeys and two-factor</strong> — WebAuthn sign-in and TOTP, each one flag to switch on, with a prompt to add a passkey after registering.</li>
+							</ul>
+						</div>
+						<div class="trust-card">
+							<div class="trust-head">
+								<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#b98e3f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"></path><path d="M14 2v5h5"></path><path d="M9 13h6"></path><path d="M9 17h4"></path></svg>
+								<span class="trust-name">Accountability</span>
+							</div>
+							<ul class="trust-list">
+								<li><strong>A security event log</strong> — sign-ins, changes to access — pruned on a retention schedule rather than kept forever.</li>
+								<li><strong>Audit exports</strong> for when someone needs the record in a file, not on a screen.</li>
+								<li><strong>Per-user data export</strong>, generated on request and purged when it expires.</li>
+								<li><strong>Sessions and roles</strong> you can actually see and revoke, alongside the moderation audit log.</li>
+							</ul>
+						</div>
+					</div>
+					<!-- links stay on the text's own line: Astro trims the whitespace
+					     between a line break and an element, which eats the space -->
+					<p class="trust-note">
+						None of this is a plan you upgrade to. It's the <a href={configGuide} target="_blank" rel="noopener" data-cta="docs" data-placement="selfhost">configuration guide</a> and the <a href={featureToggles} target="_blank" rel="noopener" data-cta="docs" data-placement="selfhost">feature toggles</a> — read them before you believe this page.
 					</p>
-					<ul class="checklist">
-						<li>
-							<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
-							<span><strong>Unlimited everything.</strong> Members, history, file storage, bounded by your disk, not a plan.</span>
-						</li>
-						<li>
-							<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
-							<span><strong>Your name on it.</strong> Set the instance name, drop your marks into a mounted directory, drop the attribution line. Read at runtime, so it takes no fork, no rebuild and no custom image — <a href={brandingGuide} target="_blank" rel="noopener" data-cta="docs" data-placement="selfhost">the branding guide</a> is three settings long.</span>
-						</li>
-						<li>
-							<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
-							<span><strong>Boring, auditable stack.</strong> Laravel, Vue, Postgres, Reverb, Meilisearch. No build step. Read every line on GitHub.</span>
-						</li>
-						<li>
-							<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
-							<span><strong>Hardened before you touch it.</strong> A real content security policy, HSTS on secure responses, framing denied by default, secure session cookies. Defaults, not a checklist you work through.</span>
-						</li>
-						<!--
-						  Two locales is two locales. `lang/` upstream is the source of
-						  truth and scripts/sync-from-upstream.mjs fails when this line
-						  and that directory disagree — do not add a language here first.
-						-->
-						<li>
-							<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
-							<span><strong>English and French.</strong> The interface is translated, down to role labels and export copy, and each person picks their language and a 12- or 24-hour clock.</span>
-						</li>
-						<li>
-							<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
-							<span><strong>Leave anytime.</strong> Built-in data export for every user. It's your database either way.</span>
-						</li>
-					</ul>
 				</div>
-				<div class="terminal">
-					<div class="terminal-bar">
-						<span class="tdot"></span><span class="tdot"></span><span class="tdot"></span>
-						<span class="terminal-host">you@yourserver</span>
-					</div>
-					<div class="terminal-body">
-						<div><span class="prompt">$</span> git clone https://github.com/deskhq/the-desk.git &amp;&amp; cd the-desk</div>
-						<div><span class="prompt">$</span> ./docker/gen-secrets.sh <span class="prompt"># fills APP_KEY, DB, Reverb keys</span></div>
-						<div><span class="prompt">$</span> docker compose up -d</div>
-						<div class="dim">Pulling ghcr.io/deskhq/the-desk:latest… done</div>
-						<div class="dim">Running migrations… done</div>
-						<div><span class="ok">✓</span> The Desk is live at <span class="ok">https://desk.your-domain.com</span></div>
-						<div class="cursor-line"><span class="prompt">$</span> <span class="cursor"></span></div>
-					</div>
-					<!-- compose stays the headline path; the PaaS route is the footnote -->
-					<p class="terminal-note">Would rather not hand-manage a VPS? The repo also ships a Dokploy compose file — four screens of settings, no YAML editing. <a href={dokployGuide} target="_blank" rel="noopener" data-cta="docs" data-placement="selfhost">Deploying on Dokploy</a>.</p>
-				</div>
-			</div>
-		</section>
+			</section>
 
-		<!-- ============================ CTA ============================ -->
-		<section class="cta">
-			<div class="wrap cta-inner">
-				<svg width="44" height="44" viewBox="0 0 40 40" aria-hidden="true">
-					<polygon points="20,18 36,27 20,36 4,27" fill="#1d1a15" opacity="0.4"></polygon>
-					<polygon points="20,11 36,20 20,29 4,20" fill="#1d1a15" opacity="0.7"></polygon>
-					<polygon points="20,4 36,13 20,22 4,13" fill="#c9a35c"></polygon>
-				</svg>
-				<h2 class="serif cta-title">Set up The Desk before your next standup</h2>
-				<p class="cta-lede">Free forever, MIT licensed. If you can run a container, you can run your team's chat.</p>
-				<div class="cta-actions">
-					<a class="btn btn-dark btn-lg" href={installGuide} data-cta="install_guide" data-placement="footer_cta">Read the install guide</a>
-					<a class="btn btn-outline btn-lg" href={github} data-cta="github" data-placement="footer_cta">
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="#665f4e" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.58 9.58 0 0 1 12 6.84c.85 0 1.71.11 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85V21c0 .27.16.58.67.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"></path></svg>
-						Star on GitHub
-					</a>
+			<!-- ============================ SELF-HOST ============================ -->
+			<section id="selfhost" class="selfhost">
+				<div class="wrap selfhost-grid">
+					<div class="selfhost-copy">
+						<span class="eyebrow eyebrow--brass">Self-hosted, for real</span>
+						<h2 class="serif selfhost-title">Your messages never leave your building</h2>
+						<p class="selfhost-lede">
+							No SaaS middleman, no data-retention lawyering, no surprise pricing changes. The Desk ships
+							as one compose file with a prebuilt image. Run it on a VPS, a NAS in the closet, or your
+							company's rack.
+						</p>
+						<ul class="checklist">
+							<li>
+								<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+								<span><strong>Unlimited everything.</strong> Members, history, file storage, bounded by your disk, not a plan.</span>
+							</li>
+							<li>
+								<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+								<span><strong>Your name on it.</strong> Set the instance name, drop your marks into a mounted directory, drop the attribution line. Read at runtime, so it takes no fork, no rebuild and no custom image — <a href={brandingGuide} target="_blank" rel="noopener" data-cta="docs" data-placement="selfhost">the branding guide</a> is three settings long.</span>
+							</li>
+							<li>
+								<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+								<span><strong>Boring, auditable stack.</strong> Laravel, Vue, Postgres, Reverb, Meilisearch. No build step. Read every line on GitHub.</span>
+							</li>
+							<li>
+								<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+								<span><strong>Hardened before you touch it.</strong> A real content security policy, HSTS on secure responses, framing denied by default, secure session cookies. Defaults, not a checklist you work through.</span>
+							</li>
+							<!--
+							  Two locales is two locales. `lang/` upstream is the source of
+							  truth and scripts/sync-from-upstream.mjs fails when this line
+							  and that directory disagree — do not add a language here first.
+							-->
+							<li>
+								<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+								<span><strong>English and French.</strong> The interface is translated, down to role labels and export copy, and each person picks their language and a 12- or 24-hour clock.</span>
+							</li>
+							<li>
+								<svg viewBox="0 0 24 24" fill="none" stroke="#c9a35c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+								<span><strong>Leave anytime.</strong> Built-in data export for every user. It's your database either way.</span>
+							</li>
+						</ul>
+					</div>
+					<div class="terminal">
+						<div class="terminal-bar">
+							<span class="tdot"></span><span class="tdot"></span><span class="tdot"></span>
+							<span class="terminal-host">you@yourserver</span>
+						</div>
+						<div class="terminal-body">
+							<div><span class="prompt">$</span> git clone https://github.com/deskhq/the-desk.git &amp;&amp; cd the-desk</div>
+							<div><span class="prompt">$</span> ./docker/gen-secrets.sh <span class="prompt"># fills APP_KEY, DB, Reverb keys</span></div>
+							<div><span class="prompt">$</span> docker compose up -d</div>
+							<div class="dim">Pulling ghcr.io/deskhq/the-desk:latest… done</div>
+							<div class="dim">Running migrations… done</div>
+							<div><span class="ok">✓</span> The Desk is live at <span class="ok">https://desk.your-domain.com</span></div>
+							<div class="cursor-line"><span class="prompt">$</span> <span class="cursor"></span></div>
+						</div>
+						<!-- compose stays the headline path; the PaaS route is the footnote -->
+						<p class="terminal-note">Would rather not hand-manage a VPS? The repo also ships a Dokploy compose file — four screens of settings, no YAML editing. <a href={dokployGuide} target="_blank" rel="noopener" data-cta="docs" data-placement="selfhost">Deploying on Dokploy</a>.</p>
+					</div>
 				</div>
-				<p class="cta-note">
-					Not ready to install? <a href={demo} target="_blank" rel="noopener" data-cta="live_demo" data-placement="footer_cta">Try the live demo</a> — no signup, credentials are on the login page.
-				</p>
-			</div>
-		</section>
+			</section>
+
+			<!-- ============================ CTA ============================ -->
+			<section class="cta">
+				<div class="wrap cta-inner">
+					<svg width="44" height="44" viewBox="0 0 40 40" aria-hidden="true">
+						<polygon points="20,18 36,27 20,36 4,27" fill="#1d1a15" opacity="0.4"></polygon>
+						<polygon points="20,11 36,20 20,29 4,20" fill="#1d1a15" opacity="0.7"></polygon>
+						<polygon points="20,4 36,13 20,22 4,13" fill="#c9a35c"></polygon>
+					</svg>
+					<h2 class="serif cta-title">Set up The Desk before your next standup</h2>
+					<p class="cta-lede">Free forever, MIT licensed. If you can run a container, you can run your team's chat.</p>
+					<div class="cta-actions">
+						<a class="btn btn-dark btn-lg" href={installGuide} data-cta="install_guide" data-placement="footer_cta">Read the install guide</a>
+						<a class="btn btn-outline btn-lg" href={github} data-cta="github" data-placement="footer_cta">
+							<svg width="14" height="14" viewBox="0 0 24 24" fill="#665f4e" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.58 9.58 0 0 1 12 6.84c.85 0 1.71.11 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85V21c0 .27.16.58.67.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"></path></svg>
+							Star on GitHub
+						</a>
+					</div>
+					<p class="cta-note">
+						Not ready to install? <a href={demo} target="_blank" rel="noopener" data-cta="live_demo" data-placement="footer_cta">Try the live demo</a> — no signup, credentials are on the login page.
+					</p>
+				</div>
+			</section>
+		</main>
 
 		<!-- ============================ FOOTER ============================ -->
 		<footer class="footer">
@@ -734,9 +790,13 @@ gtag('config', ${JSON.stringify(gaMeasurementId)});
 				--panel: var(--app-dark-card);
 				--panel-line: var(--app-dark-border);
 
-				/* Site-only. The app has no light-theme tertiary text token —
-				   its faintest light value, --chart-4, is a chart colour. */
-				--faint: #9b937f;
+				/* Tertiary text. On the light sections there is no room below
+				   --muted: anything paler than #6b6355 drops under WCAG's 4.5:1
+				   on --cream, and this text is 12–13px, so tertiary and muted
+				   collapse onto the same value. The dark sections keep a real
+				   third step, since the app ships a token for exactly that. */
+				--faint: var(--muted);
+				--faint-on-dark: var(--app-dark-muted-foreground);
 			}
 			* {
 				box-sizing: border-box;
@@ -1136,7 +1196,10 @@ gtag('config', ${JSON.stringify(gaMeasurementId)});
 				color: var(--brass);
 			}
 			.eyebrow--gold {
-				color: var(--brass-mid);
+				/* --brass-mid is a border colour; as 12px uppercase text on the
+				   light sections it only reaches 2.4:1, so the eyebrows use the
+				   darker brass ink instead. */
+				color: var(--brass-ink);
 			}
 			.powered-title {
 				font-size: 34px;
@@ -1186,7 +1249,7 @@ gtag('config', ${JSON.stringify(gaMeasurementId)});
 			.stack-desc {
 				font-size: 12.5px;
 				line-height: 1.5;
-				color: var(--faint);
+				color: var(--faint-on-dark);
 			}
 
 			/* features */

@@ -20,7 +20,10 @@ const REPO = 'deskhq/the-desk';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const SHELL_VARIANTS = ['desktop-light', 'desktop-dark', 'mobile-light', 'mobile-dark'];
-const SHELL_DIR = join(ROOT, 'public', 'shell');
+// Under src/, not public/: the captures go through astro:assets so the build
+// can hand modern formats to the browser, which needs them importable.
+const SHELL_REL = join('src', 'assets', 'shell');
+const SHELL_DIR = join(ROOT, SHELL_REL);
 const TOKENS_FILE = join(ROOT, 'src', 'styles', 'tokens.css');
 
 // index.astro's semantic aliases (--ink, --brass, --line, ...) read straight
@@ -47,7 +50,6 @@ const PINNED_HEXES = [
 	['#f0ece0', 'light', '--muted'], // nav pill fill
 	['#d8d2c2', 'light', '--chart-5'], // avatar-stack chip
 	['#4a4436', 'light', '--demo-banner-foreground'], // dark-section divider
-	['#9b937f', 'dark', '--chart-3'], // --faint, this page's tertiary text
 	['#2e2a21', 'dark', '--border'], // dark-section hairline
 ];
 
@@ -170,15 +172,15 @@ async function main() {
 		const bytes = Buffer.from(await res.arrayBuffer());
 		const dest = join(SHELL_DIR, `${variant}.png`);
 		if (await isCurrent(dest, bytes)) {
-			console.log(`  ok      public/shell/${variant}.png`);
+			console.log(`  ok      ${SHELL_REL}/${variant}.png`);
 			continue;
 		}
-		stale.push(`public/shell/${variant}.png`);
+		stale.push(`${SHELL_REL}/${variant}.png`);
 		if (!check) {
 			await writeFile(dest, bytes);
-			console.log(`  wrote   public/shell/${variant}.png (${(bytes.length / 1024).toFixed(0)} KB)`);
+			console.log(`  wrote   ${SHELL_REL}/${variant}.png (${(bytes.length / 1024).toFixed(0)} KB)`);
 		} else {
-			console.log(`  STALE   public/shell/${variant}.png`);
+			console.log(`  STALE   ${SHELL_REL}/${variant}.png`);
 		}
 	}
 
