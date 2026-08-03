@@ -2,7 +2,7 @@
  * GENERATED FILE — DO NOT EDIT BY HAND.
  *
  * The Desk's design tokens, lifted from deskhq/the-desk's resources/css/app.css
- * at v1.18.0. Refresh with `npm run sync:upstream`; CI refreshes it on a
+ * at v1.19.0. Refresh with `npm run sync:upstream`; CI refreshes it on a
  * schedule and opens a PR when upstream moves.
  *
  * Upstream's dark palette lives behind a `.dark` class. This site is a single
@@ -10,7 +10,7 @@
  * as `--app-dark-*` and can be used anywhere, no theme class required.
  */
 :root {
-	/* deskhq/the-desk :root @ v1.18.0 */
+	/* deskhq/the-desk :root @ v1.19.0 */
 	--app-background: #e7e4dd;
 	--app-foreground: #1d1a15;
 	--app-card: #fefdfb;
@@ -28,6 +28,7 @@
 	--app-destructive: hsl(0 72% 45%);
 	--app-destructive-foreground: #f3efe4;
 	--app-destructive-text: hsl(0 72% 40%);
+	--app-status-success: #33664b;
 	--app-border: #e3dfd5;
 	--app-input: #e0dbcd;
 	--app-scrim: rgba(29, 26, 21, 0.5);
@@ -70,7 +71,7 @@
 	--app-sidebar: #fbfaf7;
 	--app-sidebar-rail: #eeeade;
 
-	/* deskhq/the-desk .dark @ v1.18.0 */
+	/* deskhq/the-desk .dark @ v1.19.0 */
 	--app-dark-background: #12100c;
 	--app-dark-foreground: #f3efe4;
 	--app-dark-card: #1e1b15;
@@ -88,6 +89,7 @@
 	--app-dark-destructive: hsl(0 72% 55%);
 	--app-dark-destructive-foreground: #f3efe4;
 	--app-dark-destructive-text: hsl(0 72% 64%);
+	--app-dark-status-success: #86c8a1;
 	--app-dark-border: #2e2a21;
 	--app-dark-input: #2a271f;
 	--app-dark-scrim: rgba(0, 0, 0, 0.6);
